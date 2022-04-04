@@ -2,7 +2,7 @@ import React from 'react';
 import { Formik, Field, Form } from 'formik';
 import { useProfileStore } from 'lib/hooks/useProfileStore';
 import { client } from 'lib/api/axiosClient';
-import { IService, IUser } from '@shiftrr/types/models';
+import { IService, IUser } from 'types';
 
 type Props = {
   service: IService;

@@ -1,4 +1,4 @@
-import { IUser } from '@shiftrr/types/models';
+import { IUser } from 'types';
 import React from 'react';
 import NextImage from 'next/image';
 import NextLink from 'next/link';

@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import NextLink from 'next/link';
 import cn from 'classnames';
 
-import { IService } from '@shiftrr/types/models';
+import { IService } from 'types';
 
 interface Props extends IService {
   className?: string;

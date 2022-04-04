@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import NextLink from 'next/link';
 
 import { client } from 'lib/api/axiosClient';
-import { IRequest, IService, IUser } from '@shiftrr/types/models';
+import { IRequest, IService, IUser } from 'types';
 import { CheckIcon, CrossIcon } from 'components/icons';
 
 interface Props {

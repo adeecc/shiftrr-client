@@ -4,7 +4,7 @@ import { GetServerSideProps, NextPage } from 'next';
 import { useProfileStore } from 'lib/hooks/useProfileStore';
 import { client } from 'lib/api/axiosClient';
 import Container from 'components/common/Container';
-import { IService, IUser } from '@shiftrr/types/models';
+import { IService, IUser } from 'types';
 
 import SellerProfileCard from 'components/user/SellerProfileCard';
 import Modal from 'components/common/Modal';

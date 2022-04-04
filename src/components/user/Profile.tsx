@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import NextImage from 'next/image';
 
-import type { IService, IUser } from '@shiftrr/types/models';
+import type { IService, IUser } from 'types';
 import Container from 'components/common/Container';
 import Button from 'components/common/Button';
 import Modal from 'components/common/Modal';
@@ -124,13 +124,8 @@ const Profile: React.FC<Props> = ({
         <div className="col-span-full">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex gap-x-4">
-              <div className="relative">
-                <NextImage
-                  src={profilePicture}
-                  width="64px"
-                  height="64px"
-                  className="rounded-full"
-                />
+              <div className="relative h-16 w-16 rounded-full overflow-hidden">
+                <NextImage src={profilePicture} width="64px" height="64px" />
               </div>
               <div className="flex flex-col justify-center">
                 <div className="flex gap-x-1 items-center">
