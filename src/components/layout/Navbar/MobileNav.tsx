@@ -30,25 +30,26 @@ const MobileNav: React.FC<{ navItems: NavItemType[] }> = ({ navItems }) => {
   }, []);
 
   return (
-    <nav className="fixed top-0 inset-x-0 md:hidden h-20 items-center bg-white border-gray-300 border-b">
-      <div className="flex w-full h-full px-10 mx-auto justify-between items-center ">
-        <button
-          onClick={toggleMenu}
-          aria-label="Toggle menu"
-          type="button"
-          className={cn(styles.burger, '')}
-        >
-          <MenuIcon className="h-8 w-8 absolute" data-hide={isMenuOpen} />
-          <CrossIcon className="h-8 w-8 absolute" data-hide={!isMenuOpen} />
-        </button>
-        <NavItem href="/">
-          <Logo className="h-10 w-10" />
-        </NavItem>
-        <ProfileMenu />
-      </div>
-
+    <div className="fixed inset-0 z-50 md:hidden">
+      <nav className="h-20 items-center bg-white border-gray-300 border-b">
+        <div className="flex w-full h-full px-10 mx-auto justify-between items-center ">
+          <button
+            onClick={toggleMenu}
+            aria-label="Toggle menu"
+            type="button"
+            className={cn(styles.burger, '')}
+          >
+            <MenuIcon className="h-8 w-8 absolute" data-hide={isMenuOpen} />
+            <CrossIcon className="h-8 w-8 absolute" data-hide={!isMenuOpen} />
+          </button>
+          <NavItem href="/">
+            <Logo className="h-10 w-10" />
+          </NavItem>
+          <ProfileMenu />
+        </div>
+      </nav>
       {isMenuOpen && (
-        <div className="p-10 flex flex-col items-start space-y-10 bg-white">
+        <div className="flex flex-col justify-center space-y-10 h-full p-10 bg-white">
           {navItems.map(({ href, text }) => (
             <NavItem
               key={href}
@@ -60,7 +61,7 @@ const MobileNav: React.FC<{ navItems: NavItemType[] }> = ({ navItems }) => {
           ))}
         </div>
       )}
-    </nav>
+    </div>
   );
 };
 
