@@ -26,7 +26,9 @@ const ServiceCard: React.FC<Props> = ({
     >
       <div className="">
         <NextLink href={`/profile/${seller}`}>
-          <a className="text-xs font-semibold text-gray-600">@{seller}</a>
+          <a className="text-xs font-semibold text-gray-600">
+            @{seller.username}
+          </a>
         </NextLink>
         <NextLink href={`/service/${_id}`}>
           <a>

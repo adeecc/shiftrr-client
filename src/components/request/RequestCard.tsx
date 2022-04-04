@@ -2,46 +2,30 @@ import React, { useEffect, useMemo, useState } from 'react';
 import NextLink from 'next/link';
 
 import { client } from 'lib/api/axiosClient';
-import { IRequest, IService, IUser } from 'types';
+import { IRequest } from 'types';
 import { CheckIcon, CrossIcon } from 'components/icons';
 
 interface Props {
-  requestId: string;
+  populatedRequest: IRequest;
   isBuyer: boolean;
 }
 
-const RequestCard: React.FC<Props> = ({ isBuyer = false, requestId }) => {
-  const [populatedRequest, setPopulatedRequest] = useState<IRequest>();
-  const [populatedService, setPopulatedService] = useState<IService>();
-  const [populatedConsumer, setPopulatedConsumer] = useState<IUser>();
-
-  const consumer = useMemo(
-    () => (isBuyer ? populatedRequest?.seller : populatedRequest?.buyer),
+const RequestCard: React.FC<Props> = ({
+  isBuyer = false,
+  populatedRequest,
+}) => {
+  console.log(populatedRequest);
+  const populatedConsumer = useMemo(
+    () =>
+      isBuyer ? populatedRequest?.service.seller : populatedRequest?.buyer,
     [isBuyer, populatedRequest]
   );
-
-  useEffect(() => {
-    const populateRequest = async () => {
-      const _request = await client.get(`/api/requests/${requestId}`);
-      if (!_request) return;
-
-      setPopulatedRequest(_request);
-
-      const _service = await client.get(`/api/service/${_request.service}`);
-      setPopulatedService(_service);
-
-      const _client = await client.get(`/api/user/${consumer}`);
-      setPopulatedConsumer(_client);
-    };
-
-    populateRequest();
-  }, [requestId, consumer]);
 
   const acceptRequestHandler = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     e.preventDefault();
-    await client.put(`/api/requests/${requestId}`, {
+    await client.put(`/api/requests/${populatedRequest._id}`, {
       status: 'accepted',
     });
   };
@@ -50,21 +34,21 @@ const RequestCard: React.FC<Props> = ({ isBuyer = false, requestId }) => {
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     e.preventDefault();
-    await client.delete(`/api/requests/${requestId}`);
+    await client.delete(`/api/requests/${populatedRequest._id}`);
   };
 
   return (
     <div className="flex flex-col sm:flex-row justify-between border rounded">
       <div className="flex flex-col gap-y-1 p-6 sm:max-w-md md:max-w-prose">
         <h5 className="text-xl font-semibold text-gray-500">
-          <NextLink href={`/service/${populatedService?._id}`}>
-            <a>{populatedService?.name}</a>
+          <NextLink href={`/service/${populatedRequest?.service?._id}`}>
+            <a>{populatedRequest?.service?.name}</a>
           </NextLink>
         </h5>
 
         <div className="flex gap-1">
           {isBuyer ? <span>Requested to</span> : <span>Requested by</span>}
-          <NextLink href={`/profile/${consumer}`}>
+          <NextLink href={`/profile/${populatedConsumer._id}`}>
             <a className="text-accent-300 font-semibold">
               @{populatedConsumer?.username}
             </a>

@@ -29,9 +29,7 @@ const ServiceDetailPage: NextPage<Props> = ({ id }) => {
   const profile = useProfileStore((state) => state.profile);
 
   const [service, setService] = useState<IService>();
-  const [seller, setSeller] = useState<IUser>();
   const [isServiceLoading, setIsServiceLoading] = useState(true);
-  const [isSellerLoading, setIsSellerLoading] = useState(true);
 
   const router = useRouter();
 
@@ -45,10 +43,6 @@ const ServiceDetailPage: NextPage<Props> = ({ id }) => {
       const _service = await client.get(`api/service/${id}`);
       setService(_service);
       setIsServiceLoading(false);
-
-      const _seller = await client.get(`api/user/${_service.seller}`);
-      setSeller(_seller);
-      setIsSellerLoading(false);
     };
 
     _getServiceDetail();
@@ -78,7 +72,7 @@ const ServiceDetailPage: NextPage<Props> = ({ id }) => {
           <div className="flex flex-col gap-y-4 rounded-lg bg-white p-6">
             {isServiceLoading ? (
               'Loading...'
-            ) : (
+            ) : service ? (
               <div className="flex flex-col gap-y-4">
                 <div className="grid grid-cols-4 gap-4 items-center pb-4 border-b">
                   <div className="col-span-3 flex items-center gap-x-2">
@@ -87,7 +81,7 @@ const ServiceDetailPage: NextPage<Props> = ({ id }) => {
                   <div className="col-span-1 justify-self-end">
                     {isSeller ? (
                       <button
-                        className="px-3 py-2 text-accent-300 font-semibold outline-none border border-accent-300 hover:text-white hover:bg-accent-100 transition-colors rounded-lg"
+                        className="px-3 py-2 text-accent-300 font-semibold outline-none border border-accent-300 hover:text-white hover:bg-accent-100 transition-colors rounded-md"
                         onClick={deleteGigHandler}
                       >
                         Delete Gig
@@ -95,7 +89,7 @@ const ServiceDetailPage: NextPage<Props> = ({ id }) => {
                     ) : (
                       <>
                         <button
-                          className="px-3 py-2 text-accent-300 font-semibold outline-none border border-accent-300 hover:text-white hover:bg-accent-100 transition-colors rounded-lg"
+                          className="px-3 py-2 text-accent-300 font-semibold outline-none border border-accent-300 hover:text-white hover:bg-accent-100 transition-colors rounded-md"
                           onClick={requestGigHandler}
                         >
                           Book this Gig
@@ -106,8 +100,8 @@ const ServiceDetailPage: NextPage<Props> = ({ id }) => {
                           title="Book the Gig"
                         >
                           <CreateRequestForm
-                            seller={seller!}
                             service={service!}
+                            seller={service!.seller}
                           />
                         </Modal>
                       </>
@@ -129,6 +123,8 @@ const ServiceDetailPage: NextPage<Props> = ({ id }) => {
                   </h4>
                 </div>
               </div>
+            ) : (
+              'Service Not Found :('
             )}
           </div>
         </div>
@@ -136,9 +132,10 @@ const ServiceDetailPage: NextPage<Props> = ({ id }) => {
         {/* Seller Details */}
         <div className="col-span-full md:col-span-2">
           <div className="rounded-lg bg-white p-6">
-            {isSellerLoading
+            {isServiceLoading
               ? 'Loading...'
-              : seller && <SellerProfileCard {...seller} />}
+              : service &&
+                service.seller && <SellerProfileCard {...service.seller} />}
           </div>
         </div>
 
@@ -149,7 +146,7 @@ const ServiceDetailPage: NextPage<Props> = ({ id }) => {
               <h2 className="text-4xl font-semibold">Ratings and Reviews</h2>
               <div className="flex gap-2 items-center">
                 <StarIcon className="h-6 w-6 text-accent-300" />
-                {service?.rating.toFixed(2)}
+                {/* {service?.rating?.toFixed(2)} TODO: Add Cumulative Rating */}
               </div>
             </div>
             <div className="text-gray-600">No Reviews Yet :(</div>

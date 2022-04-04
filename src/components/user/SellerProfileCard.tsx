@@ -54,7 +54,7 @@ const SellerProfileCard: React.FC<Props> = ({
         <div className="flex gap-x-1 items-center">
           <StarIcon className="h-3 w-3 text-accent-100" />
           <span className="font-semibold text-gray-500">
-            {sellerProfile.rating}
+            {/* {sellerProfile.rating} TODO: Replace with new collection */}
           </span>
         </div>
       </div>

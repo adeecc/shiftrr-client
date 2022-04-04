@@ -19,8 +19,7 @@ const Button: React.FC<Props> = ({
     <NextLink href={href}>
       <a
         className={cn(
-          white ? 'bg-white' : 'bg-accent-100 text-white',
-          'px-3 py-2 rounded-md',
+          'px-3 py-2 text-accent-300 font-semibold outline-none border border-accent-300 hover:text-white hover:bg-accent-100 transition-colors rounded-md',
           className
         )}
       >

@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import NextImage from 'next/image';
 
-import type { IService, IUser } from 'types';
+import type { IRequest, IService, IUser } from 'types';
 import Container from 'components/common/Container';
 import Button from 'components/common/Button';
 import Modal from 'components/common/Modal';
@@ -67,6 +67,7 @@ interface Props extends IUser {
 }
 
 const Profile: React.FC<Props> = ({
+  _id,
   isSelf = false,
   profilePicture,
   name,
@@ -78,7 +79,6 @@ const Profile: React.FC<Props> = ({
   role,
   status,
   sellerProfile,
-  buyerProfile,
   ...props
 }) => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -90,39 +90,56 @@ const Profile: React.FC<Props> = ({
   const [isPopulatingService, setIsPopulatingService] = useState(true);
   const [populatedService, setPopulatedService] = useState<IService[]>([]);
 
+  const [isPopulatingRequests, setIsPopulatingRequests] = useState(true);
+  const [populatedRequests, setPopulatedRequests] = useState<IRequest[]>([]);
+
+  const [populatedRequested, setPopulatedRequested] = useState<IRequest[]>([]);
+
   const toggleBanUser = () => {
-    client.put(`/api/user/${props._id}`, {
+    client.put(`/api/user/${_id}`, {
       status: isBanned ? 'active' : 'banned',
     });
   };
 
   useEffect(() => {
     const populateServices = async () => {
-      if (!sellerProfile.services?.length) {
-        setIsPopulatingService(false);
-        return;
-      }
-
-      const res = await Promise.all(
-        sellerProfile?.services?.map(async (value, index) => {
-          const service = await client.get(`/api/service/${value}`);
-          return service;
-        })
-      );
+      const res: IService[] = await client.get('api/service');
+      const services = res.filter((service) => service.seller._id === _id);
+      console.log(res);
 
       setIsPopulatingService(false);
-      setPopulatedService(res);
+      setPopulatedService(services);
     };
 
     populateServices();
-  }, [sellerProfile?.services]);
+  }, [modalIsOpen, _id]); // modalIsOpen as parameter so the service can be populated whenever the modal closes. Ideally, extract our the service platform to a different component
+
+  useEffect(() => {
+    const populateRequests = async () => {
+      const res: IRequest[] = await client.get('api/requests');
+      console.log(res);
+
+      const requests = res.filter(
+        (request) => request.service.seller._id === _id
+      );
+      const requested = res.filter((request) => request.buyer._id === _id);
+
+      console.log({ requests, requested });
+
+      setIsPopulatingRequests(false);
+      setPopulatedRequests(requests);
+      setPopulatedRequested(requested);
+    };
+
+    populateRequests();
+  }, [_id]);
 
   return (
     <Container>
       <div className="grid grid-cols-1 md:grid-cols-6 gap-5 auto-rows-max w-full">
         {/* Header Section */}
         <div className="col-span-full">
-          <div className="flex flex-col md:flex-row justify-between items-center">
+          <div className="flex flex-col md:flex-row gap-4 justify-between items-center">
             <div className="flex gap-x-4">
               <div className="relative h-16 w-16 rounded-full overflow-hidden">
                 <NextImage src={profilePicture} width="64px" height="64px" />
@@ -131,7 +148,9 @@ const Profile: React.FC<Props> = ({
                 <div className="flex gap-x-1 items-center">
                   <h3 className="font-semibold text-3xl">{name}</h3>
                   {isAdmin && (
-                    <span className="font-semibold text-gray-500">(admin)</span>
+                    <span className="font-semibold text-gray-500 text-xs">
+                      (admin)
+                    </span>
                   )}
                 </div>
                 <span className="text-sm text-gray-700">@{username}</span>
@@ -191,7 +210,7 @@ const Profile: React.FC<Props> = ({
               {isSelf && (
                 <div className="">
                   <button
-                    className="bg-accent-100 text-white px-3 py-2 rounded-md"
+                    className="px-3 py-2 text-accent-300 font-semibold outline-none border border-accent-300 hover:text-white hover:bg-accent-100 transition-colors rounded-md"
                     onClick={() => setModalIsOpen(true)}
                   >
                     Add a Gig
@@ -206,18 +225,15 @@ const Profile: React.FC<Props> = ({
                 </div>
               )}
             </div>
-            {sellerProfile.services?.length ? (
+            {populatedService.length ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                {populatedService.map(
-                  (service) =>
-                    service && (
-                      <ServiceCard
-                        key={service?._id?.toString()}
-                        {...service}
-                        className="h-auto"
-                      />
-                    )
-                )}
+                {populatedService.map((service) => (
+                  <ServiceCard
+                    key={service?._id}
+                    {...service}
+                    className="h-auto"
+                  />
+                ))}
               </div>
             ) : (
               <span className="flex h-full items-center text-gray-500">
@@ -237,9 +253,7 @@ const Profile: React.FC<Props> = ({
                   Publically Offered Gigs
                 </span>
               </div>
-              <RequestCarousel
-                requests={sellerProfile.requests?.map((req) => req.toString())}
-              />
+              <RequestCarousel requests={populatedRequests} />
             </div>
           </div>
         )}
@@ -254,10 +268,7 @@ const Profile: React.FC<Props> = ({
                   Publically Offered Gigs
                 </span>
               </div>
-              <RequestCarousel
-                isBuyer
-                requests={buyerProfile.requested?.map((req) => req.toString())}
-              />
+              <RequestCarousel requests={populatedRequested} />
             </div>
           </div>
         )}

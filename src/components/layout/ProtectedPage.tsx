@@ -11,11 +11,8 @@ const ProtectedPage: React.FC<Props> = ({ pageProps, children }) => {
 
   useEffect(() => {
     const _getUser = async () => {
-      // if (profile === null) {
       const res = await client.get('api/user/me');
-      // console.log(res?.msg);
-      setProfile(res?.msg);
-      // }
+      setProfile(res);
     };
 
     _getUser();
@@ -23,7 +20,6 @@ const ProtectedPage: React.FC<Props> = ({ pageProps, children }) => {
 
   // TODO: Add Singular layout to cover all cases
   if (pageProps.protected && !profile) {
-    // console.log(profile);
     return (
       <div className="h-screen grid place-items-center">
         <h5 className="text-xl">Loading...</h5>

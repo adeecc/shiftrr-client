@@ -22,8 +22,6 @@ const CreateRequestForm: React.FC<Props> = ({ service, seller }) => {
       onSubmit={async (values, { setSubmitting, resetForm }) => {
         const res = await client.post('/api/requests', {
           service: service._id,
-          seller: seller._id,
-          buyer: user._id,
           price: values.price,
           information: values.information,
         });

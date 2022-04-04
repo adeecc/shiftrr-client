@@ -1,9 +1,10 @@
 import React from 'react';
+import { IRequest } from 'types';
 import RequestCard from './RequestCard';
 
 interface Props {
   isBuyer?: boolean;
-  requests?: string[];
+  requests?: IRequest[];
 }
 
 const RequestCarousel: React.FC<Props> = ({ isBuyer = false, requests }) => {
@@ -12,7 +13,11 @@ const RequestCarousel: React.FC<Props> = ({ isBuyer = false, requests }) => {
       {requests?.length ? (
         requests!.map((request) => {
           return (
-            <RequestCard key={request} isBuyer={isBuyer} requestId={request} />
+            <RequestCard
+              key={request._id}
+              isBuyer={isBuyer}
+              populatedRequest={request}
+            />
           );
         })
       ) : (
