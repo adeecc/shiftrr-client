@@ -1,12 +1,11 @@
 import React from 'react';
 import { Formik, Field, Form } from 'formik';
-import { useProfileStore } from 'lib/hooks/useProfileStore';
+
 import { client } from 'lib/api/axiosClient';
 
 type Props = {};
 
 const CreateServiceForm: React.FC<Props> = (props: Props) => {
-  const user = useProfileStore((state) => state.profile);
   return (
     <Formik
       initialValues={{ name: '', description: '', startingPrice: 0, image: '' }}

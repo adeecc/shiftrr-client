@@ -30,7 +30,12 @@ const MobileNav: React.FC<{ navItems: NavItemType[] }> = ({ navItems }) => {
   }, []);
 
   return (
-    <div className="fixed inset-0 z-50 md:hidden">
+    <div
+      className={cn(
+        'fixed z-50 md:hidden',
+        isMenuOpen ? 'inset-0' : 'top-0 inset-x-0'
+      )}
+    >
       <nav className="h-20 items-center bg-white border-gray-300 border-b">
         <div className="flex w-full h-full px-10 mx-auto justify-between items-center ">
           <button

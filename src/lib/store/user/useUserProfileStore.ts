@@ -1,14 +1,16 @@
+import { IUser } from 'types';
 import create from 'zustand';
 
 type State = {
-  profile: any;
-  isAdmin: boolean | null;
+  profile: IUser | null;
+  isAdmin: boolean;
+
   setProfile: (profile: any) => void;
 };
 
-export const useProfileStore = create<State>((set) => ({
+export const useUserProfileStore = create<State>((set) => ({
   profile: null,
   isAdmin: false,
-  setProfile: (profile) =>
+  setProfile: (profile: IUser) =>
     set((state) => ({ ...state, profile, isAdmin: profile?.role === 'admin' })),
 }));

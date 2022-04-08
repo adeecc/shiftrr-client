@@ -3,12 +3,12 @@ import { Menu, Transition } from '@headlessui/react';
 
 import { ProfileIcon } from 'components/icons';
 import NavItem from './NavItem';
-import { useProfileStore } from 'lib/hooks/useProfileStore';
+import { useUserProfileStore } from 'lib/store/user';
 
 type Props = {};
 
 const ProfileMenu: React.FC<Props> = () => {
-  const profile = useProfileStore((state) => state.profile);
+  const profile = useUserProfileStore((state) => state.profile);
   return (
     <Menu as="div" className="relative">
       <Menu.Button className="">

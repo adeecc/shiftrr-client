@@ -1,5 +1,5 @@
 import { client } from 'lib/api/axiosClient';
-import { useProfileStore } from 'lib/hooks/useProfileStore';
+import { useUserProfileStore } from 'lib/store/user';
 import React, { useEffect } from 'react';
 
 type Props = {
@@ -7,7 +7,7 @@ type Props = {
 };
 
 const ProtectedPage: React.FC<Props> = ({ pageProps, children }) => {
-  const { profile, setProfile } = useProfileStore((state) => state);
+  const { profile, setProfile } = useUserProfileStore((state) => state);
 
   useEffect(() => {
     const _getUser = async () => {

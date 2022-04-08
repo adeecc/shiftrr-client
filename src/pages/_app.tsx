@@ -16,6 +16,10 @@ const navItems: NavItemType[] = [
     href: '/work',
     text: 'Find a Job',
   },
+  {
+    href: '/profile/history',
+    text: 'History',
+  },
 ];
 
 const App: React.FC<AppProps> = ({ Component, pageProps }) => {

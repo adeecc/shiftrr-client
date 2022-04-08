@@ -10,28 +10,6 @@
   --color-accent-300: #d90429;
 }
 
-/* for firefox */
-* {
-  scrollbar-width: thin;
-  scrollbar-color: var(--text-gray-800) rgba(0, 0, 0, 0);
-}
-
-/* for non-firefox */
-::-webkit-scrollbar {
-  overflow: overlay;
-  width: 8px;
-  /* shouldnt hardcode width, pls find way to make it dynamic, thin wasn't working for me...*/
-}
-
-::-webkit-scrollbar-track {
-  display: initial;
-}
-
-::-webkit-scrollbar-thumb {
-  background-color: var(--text-gray-800);
-  border-radius: 5px;
-}
-
 html {
   scroll-behavior: smooth;
 }
@@ -39,11 +17,4 @@ html {
 body,
 #__next {
   box-sizing: border-box;
-}
-
-table {
-  display: block;
-  max-width: fit-content;
-  overflow-x: auto;
-  white-space: nowrap;
 }

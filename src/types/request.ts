@@ -14,4 +14,6 @@ export default interface IRequest {
   price: number;
   information: string;
   status: requestStatus;
+  createdAt: string; // DateTime String
+  updatedAt: string; // DateTime String
 }

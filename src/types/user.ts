@@ -23,4 +23,6 @@ export default interface IUser {
   status: userStatus;
   role: userRole;
   sellerProfile: ISeller;
+  createdAt: string; // DateTime String
+  updatedAt: string; // DateTime String
 }

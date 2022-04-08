@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import NextLink from 'next/link';
 import cn from 'classnames';
 
@@ -13,7 +13,6 @@ const ServiceCard: React.FC<Props> = ({
   seller,
   name,
   description,
-  rating,
   startingPrice,
   className,
 }) => {
@@ -25,7 +24,7 @@ const ServiceCard: React.FC<Props> = ({
       )}
     >
       <div className="">
-        <NextLink href={`/profile/${seller}`}>
+        <NextLink href={`/profile/${seller._id}`}>
           <a className="text-xs font-semibold text-gray-600">
             @{seller.username}
           </a>
@@ -43,7 +42,7 @@ const ServiceCard: React.FC<Props> = ({
           {description.length > 100 && '...'}
         </div>
         <div className=" font-semibold pt-4 text-gray-600 flex justify-between items-center">
-          <span className="text-accent-300">{rating}/5</span>
+          {/* <span className="text-accent-300">{rating}/5</span> */}
           <div className="flex flex-col">
             <span className="text-gray-500 text-xs">Starting At</span>
             <span>₹{startingPrice}</span>

@@ -1,10 +1,10 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 
-import { useProfileStore } from 'lib/hooks/useProfileStore';
+import { useUserProfileStore } from 'lib/store/user';
 import { client } from 'lib/api/axiosClient';
 import Container from 'components/common/Container';
-import { IService, IUser } from 'types';
+import { IService } from 'types';
 
 import SellerProfileCard from 'components/user/SellerProfileCard';
 import Modal from 'components/common/Modal';
@@ -26,7 +26,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
 
 const ServiceDetailPage: NextPage<Props> = ({ id }) => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
-  const profile = useProfileStore((state) => state.profile);
+  const profile = useUserProfileStore((state) => state.profile);
 
   const [service, setService] = useState<IService>();
   const [isServiceLoading, setIsServiceLoading] = useState(true);

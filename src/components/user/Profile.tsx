@@ -1,15 +1,23 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import NextImage from 'next/image';
+import NextLink from 'next/link';
+
+import shallow from 'zustand/shallow';
 
 import type { IRequest, IService, IUser } from 'types';
 import Container from 'components/common/Container';
 import Button from 'components/common/Button';
 import Modal from 'components/common/Modal';
 import CreateServiceForm from 'components/service/CreateServiceForm';
-import { useProfileStore } from 'lib/hooks/useProfileStore';
+import {
+  useUserProfileStore,
+  useUserServicesStore,
+  useUserRequestsStore,
+} from 'lib/store/user';
 import { client } from 'lib/api/axiosClient';
 import ServiceCard from 'components/service/ServiceCard';
-import RequestCarousel from 'components/request/RequestCarousel';
+import RequestTable from 'components/request/RequestTable';
+import { RightArrowIcon } from 'components/icons';
 
 type PersonalInformationProps = {
   email: string;
@@ -83,17 +91,29 @@ const Profile: React.FC<Props> = ({
 }) => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
 
-  const isAdmin = useProfileStore((state) => state.isAdmin);
+  const isAdmin = useUserProfileStore((state) => state.isAdmin);
   const canBan = useMemo(() => isAdmin && !isSelf, [isAdmin, isSelf]);
   const isBanned = useMemo(() => status === 'banned', [status]);
 
+  const { pendingRequests, requested, populateRequests } = useUserRequestsStore(
+    (state) => ({
+      pendingRequests: state.pendingRequests,
+      requested: state.requested,
+      populateRequests: state.populateRequests,
+    }),
+    shallow
+  );
+
   const [isPopulatingService, setIsPopulatingService] = useState(true);
-  const [populatedService, setPopulatedService] = useState<IService[]>([]);
-
   const [isPopulatingRequests, setIsPopulatingRequests] = useState(true);
-  const [populatedRequests, setPopulatedRequests] = useState<IRequest[]>([]);
 
-  const [populatedRequested, setPopulatedRequested] = useState<IRequest[]>([]);
+  const { services, setServices } = useUserServicesStore(
+    (state) => ({
+      services: state.services,
+      setServices: state.setServices,
+    }),
+    shallow
+  );
 
   const toggleBanUser = () => {
     client.put(`/api/user/${_id}`, {
@@ -105,38 +125,26 @@ const Profile: React.FC<Props> = ({
     const populateServices = async () => {
       const res: IService[] = await client.get('api/service');
       const services = res.filter((service) => service.seller._id === _id);
-      console.log(res);
 
+      setServices(services);
       setIsPopulatingService(false);
-      setPopulatedService(services);
     };
 
-    populateServices();
-  }, [modalIsOpen, _id]); // modalIsOpen as parameter so the service can be populated whenever the modal closes. Ideally, extract our the service platform to a different component
+    if (isSelf) populateServices();
+  }, [modalIsOpen, _id, setServices, isSelf]); // modalIsOpen as parameter so the service can be populated whenever the modal closes. Ideally, extract our the service platform to a different component
 
   useEffect(() => {
-    const populateRequests = async () => {
-      const res: IRequest[] = await client.get('api/requests');
-      console.log(res);
-
-      const requests = res.filter(
-        (request) => request.service.seller._id === _id
-      );
-      const requested = res.filter((request) => request.buyer._id === _id);
-
-      console.log({ requests, requested });
-
+    const _populateRequests = async () => {
+      populateRequests(_id);
       setIsPopulatingRequests(false);
-      setPopulatedRequests(requests);
-      setPopulatedRequested(requested);
     };
 
-    populateRequests();
-  }, [_id]);
+    if (isSelf) _populateRequests();
+  }, [_id, populateRequests, isSelf]);
 
   return (
     <Container>
-      <div className="grid grid-cols-1 md:grid-cols-6 gap-5 auto-rows-max w-full">
+      <div className="grid w-full grid-cols-1 md:grid-cols-6 gap-5 auto-rows-max">
         {/* Header Section */}
         <div className="col-span-full">
           <div className="flex flex-col md:flex-row gap-4 justify-between items-center">
@@ -225,9 +233,9 @@ const Profile: React.FC<Props> = ({
                 </div>
               )}
             </div>
-            {populatedService.length ? (
+            {services.length ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                {populatedService.map((service) => (
+                {services.map((service) => (
                   <ServiceCard
                     key={service?._id}
                     {...service}
@@ -249,11 +257,23 @@ const Profile: React.FC<Props> = ({
             <div className="flex flex-col p-6 gap-4 bg-white border rounded-lg shadow">
               <div className="border-b border-gray-300 pb-4">
                 <h4 className="font-semibold text-2xl">Offers to You</h4>
-                <span className="text-sm text-gray-500">
-                  Publically Offered Gigs
-                </span>
+                <div className="flex justify-between">
+                  <span className="text-sm text-gray-500">
+                    Requests made to you
+                  </span>
+                  <div className="flex items-center gap-1 text-xs text-gray-700">
+                    View Request History
+                    <NextLink href="/profile/history">
+                      <a className="h-4 w-4">
+                        <RightArrowIcon className="h-4 w-4 text-accent-100" />
+                      </a>
+                    </NextLink>
+                  </div>
+                </div>
               </div>
-              <RequestCarousel requests={populatedRequests} />
+              <div className="overflow-x-auto">
+                <RequestTable limitHeight requests={pendingRequests} />
+              </div>
             </div>
           </div>
         )}
@@ -264,11 +284,21 @@ const Profile: React.FC<Props> = ({
             <div className="flex flex-col p-6 gap-4 bg-white border rounded-lg shadow">
               <div className="border-b border-gray-300 pb-4">
                 <h4 className="font-semibold text-2xl">Offers you have Made</h4>
-                <span className="text-sm text-gray-500">
-                  Publically Offered Gigs
-                </span>
+                <div className="flex justify-between">
+                  <span className="text-sm text-gray-500">
+                    Requests you have made
+                  </span>
+                  <div className="flex items-center gap-1 text-xs text-gray-700">
+                    View Request History
+                    <NextLink href="/profile/history">
+                      <a className="h-4 w-4">
+                        <RightArrowIcon className="h-4 w-4 text-accent-100" />
+                      </a>
+                    </NextLink>
+                  </div>
+                </div>
               </div>
-              <RequestCarousel requests={populatedRequested} />
+              <RequestTable isBuyer limitHeight requests={requested} />
             </div>
           </div>
         )}

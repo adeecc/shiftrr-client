@@ -7,4 +7,6 @@ export default interface IService {
   description: string;
   image?: string;
   startingPrice: number;
+  createdAt: string; // DateTime String
+  updatedAt: string; // DateTime String
 }
