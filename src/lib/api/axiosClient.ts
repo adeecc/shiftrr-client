@@ -16,7 +16,7 @@ const resolver = async (config: AxiosRequestConfig) => {
   });
 
   if (response) {
-    console.log(response);
+    console.log(`[${config.method}] Request : ${config.url}`, response);
     console.log('Succesful Request!');
   }
 

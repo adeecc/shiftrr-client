@@ -39,12 +39,8 @@ export const useUserRequestsStore = create<State>((set, get) => ({
     })),
   setRequested: (requested) => set((state) => ({ ...state, requested })),
   populateRequests: async (_id: string) => {
-    const res: IRequest[] = await client.get('api/requests');
-
-    const requests = res.filter(
-      (request) => request.service.seller._id === _id
-    );
-    const requested = res.filter((request) => request.buyer._id === _id);
+    const requests: IRequest[] = await client.get(`api/user/${_id}/requests`);
+    const requested: IRequest[] = await client.get(`api/user/${_id}/requested`);
 
     get().setRequests(requests);
     get().setRequested(requested);

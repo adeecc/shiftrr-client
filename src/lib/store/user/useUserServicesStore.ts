@@ -12,8 +12,7 @@ export const useUserServicesStore = create<State>((set, get) => ({
   services: [],
   setServices: (services) => set((state) => ({ ...state, services })),
   populateServices: async (_id: string) => {
-    const res: IService[] = await client.get('api/requests');
-    const services = res.filter((service) => service.seller._id === _id);
+    const services: IService[] = await client.get(`api/user/${_id}/requests`);
 
     get().setServices(services);
   },

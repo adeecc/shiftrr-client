@@ -11,6 +11,7 @@ export default interface IRequest {
   _id: string;
   service: IService;
   buyer: IUser;
+  seller: IUser;
   price: number;
   information: string;
   status: requestStatus;

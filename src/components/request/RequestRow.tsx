@@ -37,8 +37,7 @@ const RequestCard: React.FC<Props> = ({
   );
 
   const populatedConsumer = useMemo(
-    () =>
-      isBuyer ? populatedRequest?.service.seller : populatedRequest?.buyer,
+    () => (isBuyer ? populatedRequest?.seller : populatedRequest?.buyer),
     [isBuyer, populatedRequest]
   );
 
@@ -123,7 +122,7 @@ const RequestCard: React.FC<Props> = ({
               </span>
             </div>
 
-            <div className="w-4/12 flex items-center justify-start">
+            <div className="w-4/12 flex items-center justify-center">
               {isBuyer && category === requestStatus.requested && (
                 <button
                   className="text-accent-100 hover:text-accent-300 font-semibold transition-colors"
