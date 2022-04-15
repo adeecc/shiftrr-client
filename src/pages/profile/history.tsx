@@ -1,8 +1,7 @@
 import React from 'react';
 import type { GetStaticProps, NextPage } from 'next';
 
-import { useUserProfileStore } from 'lib/store/user';
-import EditProfile from 'components/user/EditProfile';
+import RequestHistory from 'components/request/RequestHistory';
 
 type Props = {};
 
@@ -15,14 +14,12 @@ export const getStaticProps: GetStaticProps = ({ params }) => {
   };
 };
 
-const EditProfilePage: NextPage<Props> = () => {
-  const profile = useUserProfileStore((state) => state.profile!);
-
+const RequestHistoryPage: NextPage<Props> = () => {
   return (
     <>
-      <EditProfile {...profile} />
+      <RequestHistory />
     </>
   );
 };
 
-export default EditProfilePage;
+export default RequestHistoryPage;

@@ -1,7 +1,7 @@
 import React from 'react';
 import type { GetStaticProps, NextPage } from 'next';
 
-import { useProfileStore } from 'lib/hooks/useProfileStore';
+import { useUserProfileStore } from 'lib/store/user';
 import Profile from 'components/user/Profile';
 
 type Props = {};
@@ -15,8 +15,8 @@ export const getStaticProps: GetStaticProps = ({ params }) => {
   };
 };
 
-const ProfilePage: NextPage<Props> = (props) => {
-  const profile = useProfileStore((state) => state.profile);
+const ProfilePage: NextPage<Props> = () => {
+  const profile = useUserProfileStore((state) => state.profile!);
 
   return (
     <>

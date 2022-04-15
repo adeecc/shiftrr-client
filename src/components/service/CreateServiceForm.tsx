@@ -1,21 +1,19 @@
 import React from 'react';
 import { Formik, Field, Form } from 'formik';
-import { useProfileStore } from 'lib/hooks/useProfileStore';
+
 import { client } from 'lib/api/axiosClient';
 
 type Props = {};
 
 const CreateServiceForm: React.FC<Props> = (props: Props) => {
-  const user = useProfileStore((state) => state.profile);
   return (
     <Formik
-      initialValues={{ name: '', description: '', startingPrice: 0 }}
+      initialValues={{ name: '', description: '', startingPrice: 0, image: '' }}
       onSubmit={async (values, { setSubmitting, resetForm }) => {
         const res = await client.post('/api/service', {
-          seller: user._id,
           ...values,
-          rating: 5.0,
         });
+        console.log(res);
         setSubmitting(false);
         resetForm();
       }}

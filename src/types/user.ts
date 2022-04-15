@@ -1,6 +1,3 @@
-import mongoose, { Document } from 'mongoose';
-
-import IBuyer from './buyer';
 import ISeller from './seller';
 
 export const enum userStatus {
@@ -14,7 +11,7 @@ export const enum userRole {
 }
 
 export default interface IUser {
-  _id: mongoose.Types.ObjectId;
+  _id: string;
   profilePicture: string;
   name: string;
   username: string;
@@ -26,5 +23,6 @@ export default interface IUser {
   status: userStatus;
   role: userRole;
   sellerProfile: ISeller;
-  buyerProfile: IBuyer;
+  createdAt: string; // DateTime String
+  updatedAt: string; // DateTime String
 }

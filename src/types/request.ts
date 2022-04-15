@@ -1,19 +1,20 @@
-import mongoose, { Document } from 'mongoose';
-
 import IService from './service';
 import IUser from './user';
 
 export const enum requestStatus {
   requested = 'requested',
   accepted = 'accepted',
+  completed = 'completed',
 }
 
 export default interface IRequest {
-  _id: mongoose.Types.ObjectId;
-  service: mongoose.Types.ObjectId;
-  seller: mongoose.Types.ObjectId;
-  buyer: mongoose.Types.ObjectId;
+  _id: string;
+  service: IService;
+  buyer: IUser;
+  seller: IUser;
   price: number;
   information: string;
   status: requestStatus;
+  createdAt: string; // DateTime String
+  updatedAt: string; // DateTime String
 }

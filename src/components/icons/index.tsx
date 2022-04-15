@@ -161,7 +161,7 @@ function RightArrowIcon(props: JSX.IntrinsicElements['svg']) {
       stroke="currentColor"
       strokeLinecap="round"
       strokeLinejoin="round"
-      strokeWidth="1.5"
+      strokeWidth="2"
       {...props}
     >
       <path d="M14 5l7 7m0 0l-7 7m7-7H3" />

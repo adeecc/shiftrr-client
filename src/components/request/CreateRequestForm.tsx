@@ -1,8 +1,8 @@
 import React from 'react';
 import { Formik, Field, Form } from 'formik';
-import { useProfileStore } from 'lib/hooks/useProfileStore';
+import { useUserProfileStore } from 'lib/store/user';
 import { client } from 'lib/api/axiosClient';
-import { IService, IUser } from '@shiftrr/types/models';
+import { IService, IUser } from 'types';
 
 type Props = {
   service: IService;
@@ -10,7 +10,7 @@ type Props = {
 };
 
 const CreateRequestForm: React.FC<Props> = ({ service, seller }) => {
-  const user = useProfileStore((state) => state.profile);
+  const user = useUserProfileStore((state) => state.profile);
   return (
     <Formik
       initialValues={{
@@ -22,8 +22,6 @@ const CreateRequestForm: React.FC<Props> = ({ service, seller }) => {
       onSubmit={async (values, { setSubmitting, resetForm }) => {
         const res = await client.post('/api/requests', {
           service: service._id,
-          seller: seller._id,
-          buyer: user._id,
           price: values.price,
           information: values.information,
         });

@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 
-import { useProfileStore } from 'lib/hooks/useProfileStore';
+import { useUserProfileStore } from 'lib/store/user';
 import { client } from 'lib/api/axiosClient';
 import Profile from 'components/user/Profile';
 
@@ -18,7 +18,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
 };
 
 const UserPage: NextPage<Props> = (props) => {
-  const profile = useProfileStore((state) => state.profile);
+  const profile = useUserProfileStore((state) => state.profile);
   const id = props.id;
   const isSelf = useMemo(() => profile?._id == id, [profile?._id, id]);
 

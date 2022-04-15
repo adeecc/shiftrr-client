@@ -1,11 +1,12 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { GetStaticProps, NextPage } from 'next';
+import shallow from 'zustand/shallow';
 
-import { useServicesStore } from 'lib/hooks/useServicesStore';
+import { useSearchStore } from 'lib/store/global';
+import { client } from 'lib/api/axiosClient';
 import Container from 'components/common/Container';
 import { SearchIcon } from 'components/icons';
 import ServiceCard from 'components/service/ServiceCard';
-import { client } from 'lib/api/axiosClient';
 
 type Props = {};
 
@@ -19,7 +20,10 @@ export const getStaticProps: GetStaticProps = ({ params }) => {
 };
 
 const ServicesPage: NextPage = (props: Props) => {
-  const { services, setServices } = useServicesStore((state) => state);
+  const { services, setServices } = useSearchStore(
+    (state) => ({ services: state.services, setServices: state.setServices }),
+    shallow
+  );
 
   const [searchString, setSearchString] = useState('');
 

@@ -4,7 +4,7 @@ import cn from 'classnames';
 
 import { Formik, Field, Form } from 'formik';
 
-import { IUser, ISeller } from '@shiftrr/types/models';
+import { IUser, ISeller } from 'types';
 
 import Container from 'components/common/Container';
 import { client } from 'lib/api/axiosClient';

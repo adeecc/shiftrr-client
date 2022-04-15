@@ -1,15 +1,23 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import NextImage from 'next/image';
+import NextLink from 'next/link';
 
-import type { IService, IUser } from '@shiftrr/types/models';
+import shallow from 'zustand/shallow';
+
+import type { IRequest, IService, IUser } from 'types';
 import Container from 'components/common/Container';
 import Button from 'components/common/Button';
 import Modal from 'components/common/Modal';
 import CreateServiceForm from 'components/service/CreateServiceForm';
-import { useProfileStore } from 'lib/hooks/useProfileStore';
+import {
+  useUserProfileStore,
+  useUserServicesStore,
+  useUserRequestsStore,
+} from 'lib/store/user';
 import { client } from 'lib/api/axiosClient';
 import ServiceCard from 'components/service/ServiceCard';
-import RequestCarousel from 'components/request/RequestCarousel';
+import RequestTable from 'components/request/RequestTable';
+import { RightArrowIcon } from 'components/icons';
 
 type PersonalInformationProps = {
   email: string;
@@ -67,6 +75,7 @@ interface Props extends IUser {
 }
 
 const Profile: React.FC<Props> = ({
+  _id,
   isSelf = false,
   profilePicture,
   name,
@@ -78,65 +87,78 @@ const Profile: React.FC<Props> = ({
   role,
   status,
   sellerProfile,
-  buyerProfile,
   ...props
 }) => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
 
-  const isAdmin = useProfileStore((state) => state.isAdmin);
+  const isAdmin = useUserProfileStore((state) => state.isAdmin);
   const canBan = useMemo(() => isAdmin && !isSelf, [isAdmin, isSelf]);
   const isBanned = useMemo(() => status === 'banned', [status]);
 
+  const { pendingRequests, requested, populateRequests } = useUserRequestsStore(
+    (state) => ({
+      pendingRequests: state.pendingRequests,
+      requested: state.requested,
+      populateRequests: state.populateRequests,
+    }),
+    shallow
+  );
+
   const [isPopulatingService, setIsPopulatingService] = useState(true);
-  const [populatedService, setPopulatedService] = useState<IService[]>([]);
+  const [isPopulatingRequests, setIsPopulatingRequests] = useState(true);
+
+  const { services, setServices } = useUserServicesStore(
+    (state) => ({
+      services: state.services,
+      setServices: state.setServices,
+    }),
+    shallow
+  );
 
   const toggleBanUser = () => {
-    client.put(`/api/user/${props._id}`, {
+    client.put(`/api/user/${_id}`, {
       status: isBanned ? 'active' : 'banned',
     });
   };
 
   useEffect(() => {
     const populateServices = async () => {
-      if (!sellerProfile.services?.length) {
-        setIsPopulatingService(false);
-        return;
-      }
+      const res: IService[] = await client.get('api/service');
+      const services = res.filter((service) => service.seller._id === _id);
 
-      const res = await Promise.all(
-        sellerProfile?.services?.map(async (value, index) => {
-          const service = await client.get(`/api/service/${value}`);
-          return service;
-        })
-      );
-
+      setServices(services);
       setIsPopulatingService(false);
-      setPopulatedService(res);
     };
 
-    populateServices();
-  }, [sellerProfile?.services]);
+    if (isSelf) populateServices();
+  }, [modalIsOpen, _id, setServices, isSelf]); // modalIsOpen as parameter so the service can be populated whenever the modal closes. Ideally, extract our the service platform to a different component
+
+  useEffect(() => {
+    const _populateRequests = async () => {
+      populateRequests(_id);
+      setIsPopulatingRequests(false);
+    };
+
+    if (isSelf) _populateRequests();
+  }, [_id, populateRequests, isSelf]);
 
   return (
     <Container>
-      <div className="grid grid-cols-1 md:grid-cols-6 gap-5 auto-rows-max w-full">
+      <div className="grid w-full grid-cols-1 md:grid-cols-6 gap-5 auto-rows-max">
         {/* Header Section */}
         <div className="col-span-full">
-          <div className="flex flex-col md:flex-row justify-between items-center">
+          <div className="flex flex-col md:flex-row gap-4 justify-between items-center">
             <div className="flex gap-x-4">
-              <div className="relative">
-                <NextImage
-                  src={profilePicture}
-                  width="64px"
-                  height="64px"
-                  className="rounded-full"
-                />
+              <div className="relative h-16 w-16 rounded-full overflow-hidden">
+                <NextImage src={profilePicture} width="64px" height="64px" />
               </div>
               <div className="flex flex-col justify-center">
                 <div className="flex gap-x-1 items-center">
                   <h3 className="font-semibold text-3xl">{name}</h3>
                   {isAdmin && (
-                    <span className="font-semibold text-gray-500">(admin)</span>
+                    <span className="font-semibold text-gray-500 text-xs">
+                      (admin)
+                    </span>
                   )}
                 </div>
                 <span className="text-sm text-gray-700">@{username}</span>
@@ -196,7 +218,7 @@ const Profile: React.FC<Props> = ({
               {isSelf && (
                 <div className="">
                   <button
-                    className="bg-accent-100 text-white px-3 py-2 rounded-md"
+                    className="px-3 py-2 text-accent-300 font-semibold outline-none border border-accent-300 hover:text-white hover:bg-accent-100 transition-colors rounded-md"
                     onClick={() => setModalIsOpen(true)}
                   >
                     Add a Gig
@@ -211,18 +233,15 @@ const Profile: React.FC<Props> = ({
                 </div>
               )}
             </div>
-            {sellerProfile.services?.length ? (
+            {services.length ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                {populatedService.map(
-                  (service) =>
-                    service && (
-                      <ServiceCard
-                        key={service?._id?.toString()}
-                        {...service}
-                        className="h-auto"
-                      />
-                    )
-                )}
+                {services.map((service) => (
+                  <ServiceCard
+                    key={service?._id}
+                    {...service}
+                    className="h-auto"
+                  />
+                ))}
               </div>
             ) : (
               <span className="flex h-full items-center text-gray-500">
@@ -238,13 +257,23 @@ const Profile: React.FC<Props> = ({
             <div className="flex flex-col p-6 gap-4 bg-white border rounded-lg shadow">
               <div className="border-b border-gray-300 pb-4">
                 <h4 className="font-semibold text-2xl">Offers to You</h4>
-                <span className="text-sm text-gray-500">
-                  Publically Offered Gigs
-                </span>
+                <div className="flex justify-between">
+                  <span className="text-sm text-gray-500">
+                    Requests made to you
+                  </span>
+                  <div className="flex items-center gap-1 text-xs text-gray-700">
+                    View Request History
+                    <NextLink href="/profile/history">
+                      <a className="h-4 w-4">
+                        <RightArrowIcon className="h-4 w-4 text-accent-100" />
+                      </a>
+                    </NextLink>
+                  </div>
+                </div>
               </div>
-              <RequestCarousel
-                requests={sellerProfile.requests?.map((req) => req.toString())}
-              />
+              <div className="overflow-x-auto">
+                <RequestTable limitHeight requests={pendingRequests} />
+              </div>
             </div>
           </div>
         )}
@@ -255,14 +284,21 @@ const Profile: React.FC<Props> = ({
             <div className="flex flex-col p-6 gap-4 bg-white border rounded-lg shadow">
               <div className="border-b border-gray-300 pb-4">
                 <h4 className="font-semibold text-2xl">Offers you have Made</h4>
-                <span className="text-sm text-gray-500">
-                  Publically Offered Gigs
-                </span>
+                <div className="flex justify-between">
+                  <span className="text-sm text-gray-500">
+                    Requests you have made
+                  </span>
+                  <div className="flex items-center gap-1 text-xs text-gray-700">
+                    View Request History
+                    <NextLink href="/profile/history">
+                      <a className="h-4 w-4">
+                        <RightArrowIcon className="h-4 w-4 text-accent-100" />
+                      </a>
+                    </NextLink>
+                  </div>
+                </div>
               </div>
-              <RequestCarousel
-                isBuyer
-                requests={buyerProfile.requested?.map((req) => req.toString())}
-              />
+              <RequestTable isBuyer limitHeight requests={requested} />
             </div>
           </div>
         )}
