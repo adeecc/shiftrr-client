@@ -13,6 +13,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   return {
     props: {
       id: params?.id || 'whatinthegoddamnedfuck',
+      protected: true,
     },
   };
 };
