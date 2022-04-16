@@ -201,6 +201,102 @@ function CheckIcon(props: JSX.IntrinsicElements['svg']) {
   );
 }
 
+function CollectionIcon(props: JSX.IntrinsicElements['svg']) {
+  return (
+    <svg
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      {...props}
+    >
+      <path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+    </svg>
+  );
+}
+
+function JobHistoryIcon(props: JSX.IntrinsicElements['svg']) {
+  return (
+    <svg
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      {...props}
+    >
+      <path d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+    </svg>
+  );
+}
+
+function PendingOffersIcon(props: JSX.IntrinsicElements['svg']) {
+  return (
+    <svg
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      {...props}
+    >
+      <path d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+    </svg>
+  );
+}
+
+function TicketIcon(props: JSX.IntrinsicElements['svg']) {
+  return (
+    <svg
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      {...props}
+    >
+      <path d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
+    </svg>
+  );
+}
+
+function PlusIcon(props: JSX.IntrinsicElements['svg']) {
+  return (
+    <svg
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      {...props}
+    >
+      <path d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+    </svg>
+  );
+}
+
+function SelectorIcon(props: JSX.IntrinsicElements['svg']) {
+  return (
+    <svg
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      {...props}
+    >
+      <path d="M8 9l4-4 4 4m0 6l-4 4-4-4" />
+    </svg>
+  );
+}
+
 export {
   Logo,
   MenuIcon,
@@ -212,4 +308,10 @@ export {
   RightArrowIcon,
   StarIcon,
   CheckIcon,
+  CollectionIcon,
+  PendingOffersIcon,
+  JobHistoryIcon,
+  TicketIcon,
+  PlusIcon,
+  SelectorIcon,
 };

@@ -5,30 +5,13 @@ import '../styles/globals.css';
 
 import ProtectedPage from 'components/layout/ProtectedPage';
 import GridLayout from 'components/layout/GridLayout';
-import { NavItemType } from 'lib/types';
-
-const navItems: NavItemType[] = [
-  {
-    href: '/service',
-    text: 'Hire Talent',
-  },
-  {
-    href: '/work',
-    text: 'Find a Job',
-  },
-  {
-    href: '/profile/history',
-    text: 'History',
-  },
-];
+import { NavItemType } from 'types';
 
 const App: React.FC<AppProps> = ({ Component, pageProps }) => {
   return (
-    <GridLayout navItems={navItems}>
-      <ProtectedPage pageProps={pageProps}>
-        <Component {...pageProps} />;
-      </ProtectedPage>
-    </GridLayout>
+    <ProtectedPage pageProps={pageProps}>
+      <Component {...pageProps} />
+    </ProtectedPage>
   );
 };
 

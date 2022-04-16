@@ -1,6 +1,8 @@
-import { client } from 'lib/api/axiosClient';
+import React, { useState, useEffect } from 'react';
+
 import { useUserProfileStore } from 'lib/store/user';
-import React, { useEffect } from 'react';
+import { client } from 'lib/api/axiosClient';
+import GridLayout from 'components/layout/GridLayout';
 
 type Props = {
   pageProps: any;
@@ -8,18 +10,29 @@ type Props = {
 
 const ProtectedPage: React.FC<Props> = ({ pageProps, children }) => {
   const { profile, setProfile } = useUserProfileStore((state) => state);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const _getUser = async () => {
       const res = await client.get('api/user/me');
-      setProfile(res);
+      setIsLoading(false);
+
+      console.log(res);
+
+      if (res) {
+        setProfile(res);
+      }
     };
 
     _getUser();
   }, [setProfile]);
 
+  if (!pageProps.protected) {
+    return <>{children}</>;
+  }
+
   // TODO: Add Singular layout to cover all cases
-  if (pageProps.protected && !profile) {
+  if (pageProps.protected && isLoading) {
     return (
       <div className="h-screen grid place-items-center">
         <h5 className="text-xl">Loading...</h5>
@@ -27,8 +40,17 @@ const ProtectedPage: React.FC<Props> = ({ pageProps, children }) => {
     );
   }
 
+  if (pageProps.protected && !isLoading && !profile) {
+    return (
+      <div className="h-screen grid place-items-center">
+        <h5 className="text-xl">Please Login to continue...</h5>
+      </div>
+    );
+  }
+
   if (
     pageProps.protected &&
+    !isLoading &&
     profile &&
     pageProps.profileTypes &&
     pageProps.profileTypes.indexOf(profile.role) === -1
@@ -42,7 +64,8 @@ const ProtectedPage: React.FC<Props> = ({ pageProps, children }) => {
       </div>
     );
   }
-  return <>{children}</>;
+
+  return <GridLayout>{children}</GridLayout>;
 };
 
 export default ProtectedPage;

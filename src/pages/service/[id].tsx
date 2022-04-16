@@ -7,10 +7,9 @@ import Container from 'components/common/Container';
 import { IService } from 'types';
 
 import SellerProfileCard from 'components/user/SellerProfileCard';
-import Modal from 'components/common/Modal';
 import { useRouter } from 'next/router';
 import { StarIcon } from 'components/icons';
-import CreateRequestForm from 'components/request/CreateRequestForm';
+import CreateRequestFormModal from 'components/request/CreateRequestFormModal';
 
 type Props = {
   id: string;
@@ -20,6 +19,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   return {
     props: {
       id: params?.id || 'whatinthegoddamnedfuck',
+      protected: true,
     },
   };
 };
@@ -94,16 +94,13 @@ const ServiceDetailPage: NextPage<Props> = ({ id }) => {
                         >
                           Book this Gig
                         </button>
-                        <Modal
+
+                        <CreateRequestFormModal
+                          service={service!}
+                          seller={service!.seller}
                           isOpen={modalIsOpen}
                           setIsOpen={setModalIsOpen}
-                          title="Book the Gig"
-                        >
-                          <CreateRequestForm
-                            service={service!}
-                            seller={service!.seller}
-                          />
-                        </Modal>
+                        />
                       </>
                     )}
                   </div>
