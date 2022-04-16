@@ -27,13 +27,13 @@ export const useUserRequestsStore = create<State>((set, get) => ({
     set((state) => ({
       ...state,
       requests,
-      acceptedRequests: requests.filter(
+      acceptedRequests: requests?.filter(
         (req) => req.status === requestStatus.accepted
       ),
-      completedRequests: requests.filter(
+      completedRequests: requests?.filter(
         (req) => req.status === requestStatus.completed
       ),
-      pendingRequests: requests.filter(
+      pendingRequests: requests?.filter(
         (req) => req.status === requestStatus.requested
       ),
     })),
@@ -42,7 +42,17 @@ export const useUserRequestsStore = create<State>((set, get) => ({
     const requests: IRequest[] = await client.get(`api/user/${_id}/requests`);
     const requested: IRequest[] = await client.get(`api/user/${_id}/requested`);
 
-    get().setRequests(requests);
-    get().setRequested(requested);
+    get().setRequests(
+      requests?.sort(
+        (a, b) =>
+          new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+      )
+    );
+    get().setRequested(
+      requested?.sort(
+        (a, b) =>
+          new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+      )
+    );
   },
 }));

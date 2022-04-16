@@ -105,7 +105,7 @@ const Sidebar: React.FC<Props> = () => {
               Pending Offers
             </div>
             <span className="text-gray-500 font-semibold bg-gray-100 px-2 py-2 rounded">
-              {pendingRequests.length}
+              {pendingRequests?.length}
             </span>
           </NavItem>
 
