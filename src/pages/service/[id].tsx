@@ -4,12 +4,13 @@ import { GetServerSideProps, NextPage } from 'next';
 import { useUserProfileStore } from 'lib/store/user';
 import { client } from 'lib/api/axiosClient';
 import Container from 'components/common/Container';
-import { IService } from 'types';
+import { IRequestReview, IService, ReviewFor } from 'types';
 
 import SellerProfileCard from 'components/user/SellerProfileCard';
 import { useRouter } from 'next/router';
 import { StarIcon } from 'components/icons';
 import CreateRequestFormModal from 'components/request/CreateRequestFormModal';
+import ReviewCard from 'components/reviews/ReviewCard';
 
 type Props = {
   id: string;
@@ -31,6 +32,18 @@ const ServiceDetailPage: NextPage<Props> = ({ id }) => {
   const [service, setService] = useState<IService>();
   const [isServiceLoading, setIsServiceLoading] = useState(true);
 
+  const [requestReviews, setRequestReviews] = useState<IRequestReview[]>([]);
+  const [isLoadingRequestReviews, setIsLoadingRequestReviews] = useState(true);
+
+  const overallRating = useMemo(() => {
+    const total = requestReviews?.reduce(
+      (prevTotal, currentValue) => prevTotal + currentValue.rating,
+      0
+    );
+
+    return total / requestReviews?.length;
+  }, [requestReviews]);
+
   const router = useRouter();
 
   const isSeller = useMemo(
@@ -46,6 +59,19 @@ const ServiceDetailPage: NextPage<Props> = ({ id }) => {
     };
 
     _getServiceDetail();
+  }, [id]);
+
+  useEffect(() => {
+    const populateRequestReviews = async () => {
+      const res: IRequestReview[] = await client.get(
+        `api/reviews/request/ofservice/${id}`
+      );
+
+      setRequestReviews(res);
+      setIsLoadingRequestReviews(false);
+    };
+
+    populateRequestReviews();
   }, [id]);
 
   const deleteGigHandler = async (
@@ -66,9 +92,9 @@ const ServiceDetailPage: NextPage<Props> = ({ id }) => {
 
   return (
     <Container>
-      <div className="grid grid-cols-5 w-full gap-4 auto-rows-max">
+      <div className="grid grid-cols-6 w-full gap-4 auto-rows-max">
         {/* Gig Details */}
-        <div className="col-span-full md:col-span-3">
+        <div className="col-span-full md:col-span-4">
           <div className="flex flex-col gap-y-4 rounded-lg bg-white p-6">
             {isServiceLoading ? (
               'Loading...'
@@ -143,10 +169,26 @@ const ServiceDetailPage: NextPage<Props> = ({ id }) => {
               <h2 className="text-4xl font-semibold">Ratings and Reviews</h2>
               <div className="flex gap-2 items-center">
                 <StarIcon className="h-6 w-6 text-accent-300" />
-                {/* {service?.rating?.toFixed(2)} TODO: Add Cumulative Rating */}
+                {overallRating.toFixed(2)}/5
               </div>
             </div>
-            <div className="text-gray-600">No Reviews Yet :(</div>
+            <div className="flex flex-col">
+              {isLoadingRequestReviews ? (
+                <span className="text-sm text-gray-500">Loading...</span>
+              ) : requestReviews?.length ? (
+                <div className="flex flex-col gap-y-5">
+                  {requestReviews.map((review) => (
+                    <ReviewCard
+                      key={review._id}
+                      review={review}
+                      reviewFor={ReviewFor.request}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <span className="text-sm text-gray-500">No reviews yet</span>
+              )}
+            </div>
           </div>
         </div>
       </div>

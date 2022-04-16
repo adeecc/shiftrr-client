@@ -19,7 +19,7 @@ const RequestTable: React.FC<Props> = ({
   return (
     <div className="w-full grid grid-cols-1 text-sm">
       <div className="col-span-full grid grid-cols-9 py-4 border-b">
-        <span className="col-span-3 sm:col-span-4 font-semibold text-left">
+        <span className="col-span-3 sm:col-span-4 ml-6 font-semibold text-left">
           {isBuyer ? 'Offer To' : 'Offer From'}
         </span>
         <span className="col-span-4 sm:col-span-4 font-semibold text-left">

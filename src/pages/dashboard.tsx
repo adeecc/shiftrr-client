@@ -148,7 +148,7 @@ const ProfilePage: NextPage<Props> = () => {
                 </div>
               </div>
               <div className="overflow-x-auto">
-                {acceptedRequests.length ? (
+                {acceptedRequests?.length ? (
                   <RequestTable requests={acceptedRequests} />
                 ) : (
                   <span className="flex h-full items-center text-gray-500">
@@ -179,7 +179,7 @@ const ProfilePage: NextPage<Props> = () => {
                 </div>
               </div>
               <div className="overflow-x-auto">
-                {requested.length ? (
+                {requested?.length ? (
                   <RequestTable isBuyer requests={requested} />
                 ) : (
                   <span className="flex h-full items-center text-gray-500">

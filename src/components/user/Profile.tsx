@@ -4,12 +4,14 @@ import NextLink from 'next/link';
 
 import shallow from 'zustand/shallow';
 
-import type { IService, IUser } from 'types';
+import { IBuyerReview, ISellerReview, IService, IUser, ReviewFor } from 'types';
 import Container from 'components/common/Container';
 import Button from 'components/common/Button';
 import { useUserProfileStore, useUserServicesStore } from 'lib/store/user';
 import { client } from 'lib/api/axiosClient';
 import ServiceCard from 'components/service/ServiceCard';
+import ReviewCard from 'components/reviews/ReviewCard';
+import { StarIcon } from 'components/icons';
 
 type PersonalInformationProps = {
   email: string;
@@ -92,6 +94,31 @@ const Profile: React.FC<Props> = ({
 
   const [isPopulatingService, setIsPopulatingService] = useState(true);
 
+  const [sellerReviews, setSellerReviews] = useState<ISellerReview[]>([]);
+  const [buyerReviews, setBuyerReviews] = useState<IBuyerReview[]>([]);
+
+  const [isLoadingSellerReviews, setIsLoadingSellerReviews] = useState(true);
+
+  const [isLoadingBuyerReviews, setIsLoadingBuyerReviews] = useState(true);
+
+  const overallSellerRating = useMemo(() => {
+    const total = sellerReviews?.reduce(
+      (prevTotal, currentValue) => prevTotal + currentValue.rating,
+      0
+    );
+
+    return total / sellerReviews?.length;
+  }, [sellerReviews]);
+
+  const overallBuyerRating = useMemo(() => {
+    const total = buyerReviews?.reduce(
+      (prevTotal, currentValue) => prevTotal + currentValue.rating,
+      0
+    );
+
+    return total / buyerReviews?.length;
+  }, [buyerReviews]);
+
   const { services, setServices } = useUserServicesStore(
     (state) => ({
       services: state.services,
@@ -117,6 +144,33 @@ const Profile: React.FC<Props> = ({
 
     populateServices();
   }, [_id, setServices]);
+
+  useEffect(() => {
+    const populateSellerReviews = async () => {
+      const res: ISellerReview[] = await client.get(
+        `api/reviews/seller/ofseller/${_id}`
+      );
+
+      setSellerReviews(res);
+      setIsLoadingSellerReviews(false);
+    };
+
+    populateSellerReviews();
+  }, [_id]);
+
+  useEffect(() => {
+    const populateBuyerReviews = async () => {
+      // const res: IBuyerReview[] = []; // await client.get(`api/reviews/buyer/ofbuyer/${_id}`);
+      const res: ISellerReview[] = await client.get(
+        `api/reviews/seller/ofseller/${_id}`
+      );
+
+      setBuyerReviews(res);
+      setIsLoadingBuyerReviews(false);
+    };
+
+    populateBuyerReviews();
+  }, [_id]);
 
   return (
     <Container>
@@ -213,24 +267,58 @@ const Profile: React.FC<Props> = ({
         {/* Buyer Ratings */}
         <div className="col-span-full md:col-span-3">
           <div className="flex flex-col gap-4 p-6 bg-white border rounded-lg shadow">
-            <h5 className="font-semibold text-xl pb-2 border-b">
-              Reviews from Buyers
-            </h5>
+            <div className="flex justify-between items-center pb-4 border-b">
+              <h5 className="text-xl font-semibold"> Reviews from Buyers</h5>
+              <div className="flex gap-2 items-center">
+                <StarIcon className="h-6 w-6 text-accent-300" />
+                {overallBuyerRating.toFixed(2)}/5
+              </div>
+            </div>
             <div className="flex flex-col">
-              <span className="text-gray-500">No reviews yet</span>
-              {/* TODO: Add Reviews */}
+              {isLoadingSellerReviews ? (
+                <span className="text-sm text-gray-500">Loading...</span>
+              ) : sellerReviews.length ? (
+                <div className="flex flex-col gap-y-5">
+                  {sellerReviews.map((review) => (
+                    <ReviewCard
+                      key={review._id}
+                      review={review}
+                      reviewFor={ReviewFor.seller}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <span className="text-sm text-gray-500">No reviews yet</span>
+              )}
             </div>
           </div>
         </div>
         {/* Seller Ratings */}
         <div className="col-span-full md:col-span-3">
           <div className="flex flex-col gap-4 p-6 bg-white border rounded-lg shadow">
-            <h5 className="font-semibold text-xl pb-2 border-b">
-              Reviews from Sellers
-            </h5>
+            <div className="flex justify-between items-center pb-4 border-b">
+              <h5 className="text-xl font-semibold"> Reviews from Sellers</h5>
+              <div className="flex gap-2 items-center">
+                <StarIcon className="h-6 w-6 text-accent-300" />
+                {overallSellerRating.toFixed(2)}/5
+              </div>
+            </div>
             <div className="flex flex-col">
-              <span className="text-gray-500">No reviews yet</span>
-              {/* TODO: Add Reviews */}
+              {isLoadingBuyerReviews ? (
+                <span className="text-sm text-gray-500">Loading...</span>
+              ) : buyerReviews.length ? (
+                <div className="flex flex-col gap-y-5">
+                  {buyerReviews.map((review) => (
+                    <ReviewCard
+                      key={review._id}
+                      review={review}
+                      reviewFor={ReviewFor.buyer}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <span className="text-sm text-gray-500">No reviews yet</span>
+              )}
             </div>
           </div>
         </div>

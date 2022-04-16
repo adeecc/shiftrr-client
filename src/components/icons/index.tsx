@@ -297,6 +297,22 @@ function SelectorIcon(props: JSX.IntrinsicElements['svg']) {
   );
 }
 
+function DiscIcon(props: JSX.IntrinsicElements['svg']) {
+  return (
+    <svg
+      fill="currentColor"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      {...props}
+    >
+      <circle cx="12" cy="12" r="4" />
+    </svg>
+  );
+}
+
 export {
   Logo,
   MenuIcon,
@@ -314,4 +330,5 @@ export {
   TicketIcon,
   PlusIcon,
   SelectorIcon,
+  DiscIcon,
 };
