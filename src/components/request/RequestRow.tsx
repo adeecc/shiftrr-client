@@ -23,8 +23,7 @@ const RequestCard: React.FC<Props> = ({
 
   const [requestReviewModalIsOpen, setRequestReviewModalIsOpen] =
     useState(false);
-  const [sellerReviewModalIsOpen, setSellertReviewModalIsOpen] =
-    useState(false);
+  const [sellerReviewModalIsOpen, setSellerReviewModalIsOpen] = useState(false);
   const [buyerReviewModalIsOpen, setBuyerReviewModalIsOpen] = useState(false);
 
   const populateRequests = useUserRequestsStore(
@@ -179,7 +178,8 @@ const RequestCard: React.FC<Props> = ({
                     className="text-accent-100 hover:text-accent-300 font-semibold transition-colors"
                     onClick={(e) => {
                       e.preventDefault();
-                      setSellertReviewModalIsOpen(true);
+                      setSellerReviewModalIsOpen(true);
+                      console.log('Opening Review Modal');
                     }}
                   >
                     Review Seller
@@ -187,7 +187,7 @@ const RequestCard: React.FC<Props> = ({
                   <CreateReviewFormModal
                     reviewFor={ReviewFor.seller}
                     isOpen={sellerReviewModalIsOpen}
-                    setIsOpen={setSellertReviewModalIsOpen}
+                    setIsOpen={setSellerReviewModalIsOpen}
                     request={populatedRequest}
                   />
 
@@ -240,11 +240,21 @@ const RequestCard: React.FC<Props> = ({
               {!isBuyer && populatedRequest.status === requestStatus.completed && (
                 <div className="flex gap-4 text-gray-600 text-sm">
                   <button
-                    className="px-2.5 py-1.5 text-accent-300 font-semibold outline-none border border-accent-300 hover:text-white hover:bg-accent-100 transition-colors rounded-md"
-                    onClick={completeRequestHandler}
+                    className="text-accent-100 hover:text-accent-300 font-semibold transition-colors"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setBuyerReviewModalIsOpen(true);
+                      console.log('Opening Review Modal');
+                    }}
                   >
-                    Review!
+                    Review Buyer
                   </button>
+                  <CreateReviewFormModal
+                    reviewFor={ReviewFor.buyer}
+                    isOpen={buyerReviewModalIsOpen}
+                    setIsOpen={setBuyerReviewModalIsOpen}
+                    request={populatedRequest}
+                  />
                 </div>
               )}
             </div>
