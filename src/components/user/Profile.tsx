@@ -258,7 +258,7 @@ const Profile: React.FC<Props> = ({
                 {services.map((service) => (
                   <ServiceCard
                     key={service?._id}
-                    {...service}
+                    service={service}
                     className="h-auto"
                   />
                 ))}

@@ -10,6 +10,7 @@ import {
   Logo,
   PendingOffersIcon,
   TicketIcon,
+  UsersIcon,
 } from 'components/icons';
 
 import MobileSidebar from './MobileSidebar';
@@ -121,28 +122,41 @@ const Sidebar: React.FC<Props> = () => {
         {/* Admin Items: List, Ban, etc */}
         {isAdmin && (
           <div className="flex flex-col p-1">
-            {/* Actionable Items: Dashboard, History, Edit Profile, etc */}
-
-            <NavItem href="/">
+            <NavItem
+              href="/collections"
+              className="flex items-center gap-x-4 py-3 rounded px-5"
+            >
               <CollectionIcon className="h-6 w-6" />
-              Admin Dashboard
+              Collections
             </NavItem>
 
-            <NavItem href="/">
-              <CollectionIcon className="h-6 w-6" />
+            <NavItem
+              href="/service"
+              className="flex items-center gap-x-4 py-3 rounded px-5"
+            >
+              <UsersIcon className="h-6 w-6" />
               Review Users
             </NavItem>
 
-            <NavItem href="/profile/jobs/history">
-              <JobHistoryIcon className="h-6 w-6" />
-              Review Services
-              <span></span>
+            <NavItem
+              href="/profile/jobs/pending"
+              className="flex justify-between items-center gap-x-4 px-5 py-1 rounded"
+            >
+              <div className="flex gap-x-4">
+                <PendingOffersIcon className="h-6 w-6" />
+                Review Services
+              </div>
+              <span className="text-gray-500 font-semibold bg-gray-100 px-2 py-2 rounded">
+                {pendingRequests?.length}
+              </span>
             </NavItem>
 
-            <NavItem href="/profile/jobs/current">
-              <PendingOffersIcon className="h-6 w-6" />
+            <NavItem
+              href="/profile/jobs/history"
+              className="flex items-center gap-x-4 py-3 rounded px-5"
+            >
+              <JobHistoryIcon className="h-6 w-6" />
               Review Requests
-              <span></span>
             </NavItem>
           </div>
         )}
