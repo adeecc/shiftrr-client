@@ -102,21 +102,29 @@ const Profile: React.FC<Props> = ({
   const [isLoadingBuyerReviews, setIsLoadingBuyerReviews] = useState(true);
 
   const overallSellerRating = useMemo(() => {
-    const total = sellerReviews?.reduce(
+    if (sellerReviews?.length === 0) {
+      return '-';
+    }
+
+    const total = sellerReviews.reduce(
       (prevTotal, currentValue) => prevTotal + currentValue.rating,
       0
     );
 
-    return total / sellerReviews?.length;
+    return (total / sellerReviews.length).toFixed(2);
   }, [sellerReviews]);
 
   const overallBuyerRating = useMemo(() => {
-    const total = buyerReviews?.reduce(
+    if (buyerReviews?.length === 0) {
+      return '-';
+    }
+
+    const total = buyerReviews.reduce(
       (prevTotal, currentValue) => prevTotal + currentValue.rating,
       0
     );
 
-    return total / buyerReviews?.length;
+    return (total / buyerReviews.length).toFixed(2);
   }, [buyerReviews]);
 
   const { services, setServices } = useUserServicesStore(
@@ -160,9 +168,8 @@ const Profile: React.FC<Props> = ({
 
   useEffect(() => {
     const populateBuyerReviews = async () => {
-      // const res: IBuyerReview[] = []; // await client.get(`api/reviews/buyer/ofbuyer/${_id}`);
-      const res: ISellerReview[] = await client.get(
-        `api/reviews/seller/ofseller/${_id}`
+      const res: IBuyerReview[] = await client.get(
+        `api/reviews/buyer/ofbuyer/${_id}`
       );
 
       setBuyerReviews(res);
@@ -251,7 +258,7 @@ const Profile: React.FC<Props> = ({
                 {services.map((service) => (
                   <ServiceCard
                     key={service?._id}
-                    {...service}
+                    service={service}
                     className="h-auto"
                   />
                 ))}
@@ -271,7 +278,7 @@ const Profile: React.FC<Props> = ({
               <h5 className="text-xl font-semibold"> Reviews from Buyers</h5>
               <div className="flex gap-2 items-center">
                 <StarIcon className="h-6 w-6 text-accent-300" />
-                {overallBuyerRating.toFixed(2)}/5
+                {overallBuyerRating}/5
               </div>
             </div>
             <div className="flex flex-col">
@@ -300,7 +307,7 @@ const Profile: React.FC<Props> = ({
               <h5 className="text-xl font-semibold"> Reviews from Sellers</h5>
               <div className="flex gap-2 items-center">
                 <StarIcon className="h-6 w-6 text-accent-300" />
-                {overallSellerRating.toFixed(2)}/5
+                {overallSellerRating}/5
               </div>
             </div>
             <div className="flex flex-col">

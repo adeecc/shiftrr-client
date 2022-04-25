@@ -17,8 +17,6 @@ const ProtectedPage: React.FC<Props> = ({ pageProps, children }) => {
       const res = await client.get('api/user/me');
       setIsLoading(false);
 
-      console.log(res);
-
       if (res) {
         setProfile(res);
       }

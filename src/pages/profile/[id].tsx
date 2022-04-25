@@ -4,6 +4,7 @@ import { GetServerSideProps, NextPage } from 'next';
 import { useUserProfileStore } from 'lib/store/user';
 import { client } from 'lib/api/axiosClient';
 import Profile from 'components/user/Profile';
+import Container from 'components/common/Container';
 
 type Props = {
   id: string;
@@ -34,7 +35,11 @@ const UserPage: NextPage<Props> = (props) => {
     _getUserProfile();
   }, [isSelf, id]);
 
-  return user ? <Profile {...user} /> : <span>Loading Profile...</span>;
+  return user ? (
+    <Profile {...user} />
+  ) : (
+    <Container>Loading Profile...</Container>
+  );
 };
 
 export default UserPage;

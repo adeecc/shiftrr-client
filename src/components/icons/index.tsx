@@ -313,6 +313,107 @@ function DiscIcon(props: JSX.IntrinsicElements['svg']) {
   );
 }
 
+function UsersIcon(props: JSX.IntrinsicElements['svg']) {
+  return (
+    <svg
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      {...props}
+    >
+      <path d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+    </svg>
+  );
+}
+
+function UserAddIcon(props: JSX.IntrinsicElements['svg']) {
+  return (
+    <svg
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      {...props}
+    >
+      <path d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+    </svg>
+  );
+}
+
+function LineChartIcon(props: JSX.IntrinsicElements['svg']) {
+  return (
+    <svg
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      {...props}
+    >
+      <line x1="4" y1="19" x2="20" y2="19" />
+      <polyline points="4 15 8 9 12 11 16 6 20 10" />
+    </svg>
+  );
+}
+
+function MoneyIcon(props: JSX.IntrinsicElements['svg']) {
+  return (
+    <svg
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      {...props}
+    >
+      <path d="M9 8h6m-5 0a3 3 0 110 6H9l3 3m-3-6h6m6 1a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+  );
+}
+
+function ArrowDownRightIcon(props: JSX.IntrinsicElements['svg']) {
+  return (
+    <svg
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      {...props}
+    >
+      {/* <path stroke="none" d="M0 0h24v24H0z" fill="none" /> */}
+      <line x1="7" y1="7" x2="17" y2="17" />
+      <polyline points="17 8 17 17 8 17" />
+    </svg>
+  );
+}
+
+function ArrowUpRightIcon(props: JSX.IntrinsicElements['svg']) {
+  return (
+    <svg
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      {...props}
+    >
+      {/* <path stroke="none" d="M0 0h24v24H0z" fill="none" /> */}
+      <line x1="17" y1="7" x2="7" y2="17" />
+      <polyline points="8 7 17 7 17 16" />
+    </svg>
+  );
+}
+
 export {
   Logo,
   MenuIcon,
@@ -331,4 +432,10 @@ export {
   PlusIcon,
   SelectorIcon,
   DiscIcon,
+  UsersIcon,
+  UserAddIcon,
+  LineChartIcon,
+  MoneyIcon,
+  ArrowDownRightIcon,
+  ArrowUpRightIcon,
 };

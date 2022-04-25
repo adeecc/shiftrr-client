@@ -35,9 +35,6 @@ const Rating: React.FC<Props> = ({
             onClick={(e) => {
               e.preventDefault();
               setValue(i + 1);
-              console.log(i + 1, value);
-
-              console.log(value);
             }}
           >
             {value <= i ? (

@@ -79,7 +79,7 @@ const ServiceDetailPage: NextPage<Props> = ({ id }) => {
   ) => {
     e.preventDefault();
     const res = await client.delete(`api/service/${id}`);
-    console.log(res);
+
     router.push('/profile');
   };
 

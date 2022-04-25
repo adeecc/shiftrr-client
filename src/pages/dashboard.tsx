@@ -115,7 +115,7 @@ const ProfilePage: NextPage<Props> = () => {
                   {services.map((service) => (
                     <ServiceCard
                       key={service?._id}
-                      {...service}
+                      service={service}
                       className="h-auto"
                     />
                   ))}
@@ -132,7 +132,7 @@ const ProfilePage: NextPage<Props> = () => {
           <div className="col-span-full">
             <div className="flex flex-col p-6 gap-4 bg-white border rounded-lg shadow">
               <div className="border-b border-gray-300 pb-4">
-                <h4 className="font-semibold text-2xl">Current Jos</h4>
+                <h4 className="font-semibold text-2xl">Current Jobs</h4>
                 <div className="flex justify-between">
                   <span className="text-sm text-gray-500">
                     Jobs you are currently doing
