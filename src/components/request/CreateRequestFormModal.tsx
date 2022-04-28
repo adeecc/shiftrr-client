@@ -59,7 +59,7 @@ const CreateRequestFormModal: React.FC<Props> = ({
                   price: service.startingPrice,
                 }}
                 onSubmit={async (values, { setSubmitting, resetForm }) => {
-                  const res = await client.post('/api/requests', {
+                  await client.post('/api/requests', {
                     service: service._id,
                     price: values.price,
                     information: values.information,

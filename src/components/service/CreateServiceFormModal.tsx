@@ -48,7 +48,7 @@ const CreateServiceFormModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                   image: '',
                 }}
                 onSubmit={async (values, { setSubmitting, resetForm }) => {
-                  const res = await client.post('/api/service', {
+                  await client.post('/api/service', {
                     ...values,
                   });
 

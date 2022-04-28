@@ -3,7 +3,7 @@ import NextLink from 'next/link';
 import NextImage from 'next/image';
 import { Menu, Transition } from '@headlessui/react';
 
-import { ProfileIcon, SelectorIcon } from 'components/icons';
+import { SelectorIcon } from 'components/icons';
 import NavItem from './NavItem';
 import { useUserProfileStore } from 'lib/store/user';
 
@@ -16,7 +16,11 @@ const ProfileMenu: React.FC<Props> = () => {
       <span className="sr-only">Open user menu</span>
       <div className="flex items-center gap-x-4">
         <div className="relative h-12 w-12 rounded-full overflow-hidden">
-          <NextImage src={profile!.profilePicture} width="64px" height="64px" />
+          <NextImage
+            src={profile?.profilePicture || ''}
+            width="64px"
+            height="64px"
+          />
         </div>
         <div className="flex flex-col items-start">
           <span className="font-semibold">{profile?.name}</span>

@@ -1,6 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import NextLink from 'next/link';
-import cn from 'classnames';
+import React, { useMemo } from 'react';
 
 import {
   Chart as ChartJS,
@@ -44,8 +42,6 @@ interface Props {
 }
 
 const SalesValueChart: React.FC<Props> = ({ requests }) => {
-  useEffect(() => {}, []);
-
   const labels = useMemo(
     () => [
       'Jan',

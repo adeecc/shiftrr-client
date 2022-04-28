@@ -1,20 +1,13 @@
-import React, { useRef, useState, Fragment } from 'react';
+import React, { Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 
 type Props = {
   title: string;
-  subtitle?: string;
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const Modal: React.FC<Props> = ({
-  title,
-  subtitle,
-  children,
-  isOpen,
-  setIsOpen,
-}) => {
+const Modal: React.FC<Props> = ({ title, children, isOpen, setIsOpen }) => {
   return (
     <Transition.Root show={isOpen} as={Fragment}>
       <Dialog

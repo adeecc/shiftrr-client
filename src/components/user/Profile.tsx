@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import NextImage from 'next/image';
-import NextLink from 'next/link';
 
 import shallow from 'zustand/shallow';
 
@@ -77,10 +76,8 @@ const Profile: React.FC<Props> = ({
   contactNumber,
   bio,
   credits,
-  role,
   status,
   sellerProfile,
-  ...props
 }) => {
   const { profile, isAdmin } = useUserProfileStore(
     (state) => ({ profile: state.profile, isAdmin: state.isAdmin }),
@@ -144,9 +141,8 @@ const Profile: React.FC<Props> = ({
   useEffect(() => {
     const populateServices = async () => {
       const res: IService[] = await client.get('api/service');
-      const services = res.filter((service) => service.seller._id === _id);
 
-      setServices(services);
+      setServices(res.filter((service) => service.seller._id === _id));
       setIsPopulatingService(false);
     };
 
@@ -254,7 +250,7 @@ const Profile: React.FC<Props> = ({
               </div>
             </div>
             {services.length ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
                 {services.map((service) => (
                   <ServiceCard
                     key={service?._id}

@@ -1,7 +1,4 @@
 import React, { useState } from 'react';
-import NextImage from 'next/image';
-import cn from 'classnames';
-
 import { Formik, Field, Form } from 'formik';
 
 import { IUser, ISeller } from 'types';
@@ -34,7 +31,7 @@ const PersonalProfileForm: React.FC<PersonalProfileFormProps> = ({
         bio,
       }}
       onSubmit={async (values, { setSubmitting }) => {
-        const res = await client.put('/api/user/me', values);
+        await client.put('/api/user/me', values);
         setSubmitting(false);
       }}
     >
@@ -122,6 +119,7 @@ const PersonalProfileForm: React.FC<PersonalProfileFormProps> = ({
                 type="button"
                 disabled={isSubmitting}
                 onClick={(e) => {
+                  e.preventDefault();
                   resetForm();
                 }}
                 className="text-accent-100 border-2 border-accent-100 px-3 py-2 rounded-md"
@@ -221,14 +219,6 @@ const SkillProfileForm: React.FC<SkillProfileFormProps> = ({
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                     e.preventDefault();
                     setCurrentSkill(e.target.value);
-
-                    if (e.target.value.at(-1) === ' ') {
-                      setFieldValue(
-                        'skills',
-                        (values.skills || []).concat(currentSkill.trim())
-                      );
-                      setCurrentSkill('');
-                    }
                   }}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {

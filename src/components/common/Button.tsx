@@ -4,17 +4,10 @@ import cn from 'classnames';
 
 type Props = {
   href: string;
-  white?: boolean;
   className?: string;
 };
 
-const Button: React.FC<Props> = ({
-  href,
-  white,
-  className,
-  children,
-  ...props
-}) => {
+const Button: React.FC<Props> = ({ href, className, children }) => {
   return (
     <NextLink href={href}>
       <a

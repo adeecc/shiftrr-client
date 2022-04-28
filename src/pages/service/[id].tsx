@@ -78,7 +78,7 @@ const ServiceDetailPage: NextPage<Props> = ({ id }) => {
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     e.preventDefault();
-    const res = await client.delete(`api/service/${id}`);
+    await client.delete(`api/service/${id}`);
 
     router.push('/profile');
   };

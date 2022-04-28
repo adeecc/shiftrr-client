@@ -15,10 +15,7 @@ interface Props {
   isBuyer: boolean;
 }
 
-const RequestCard: React.FC<Props> = ({
-  populatedRequest,
-  isBuyer = false,
-}) => {
+const RequestRow: React.FC<Props> = ({ populatedRequest, isBuyer = false }) => {
   const profile = useUserProfileStore((state) => state.profile!);
 
   const [requestReviewModalIsOpen, setRequestReviewModalIsOpen] =
@@ -81,30 +78,35 @@ const RequestCard: React.FC<Props> = ({
 
   return (
     <Disclosure>
-      <div className="col-span-full border-b">
-        <Disclosure.Button className="text-left w-full grid grid-cols-9">
-          <div className="col-span-3 sm:col-span-4 py-2 flex text-semibold text-left">
-            <span
-              className={cn(
-                populatedRequest.status == requestStatus.requested
-                  ? 'text-pink-400'
-                  : populatedRequest.status == requestStatus.accepted
-                  ? 'text-cyan-300'
-                  : 'text-purple-500'
-              )}
-            >
-              <DiscIcon className="h-6 w-6" />
-            </span>
-
+      <div className="col-span-full place-items-center border-b">
+        <Disclosure.Button className="text-left w-full grid grid-cols-7 items-center gap-2">
+          <div className="col-span-2 sm:col-span-2 my-2 flex items-center text-semibold text-left">
             <NextLink href={`/profile/${populatedConsumer._id}`}>
               <a className="text-accent-300">{populatedConsumer.username}</a>
             </NextLink>
           </div>
-          <div className="col-span-4 sm:col-span-4 py-2 text-semibold text-left">
+          <div className="col-span-3 sm:col-span-3 my-2 flex items-center text-semibold text-left">
             {populatedRequest.service.name}
           </div>
 
-          <div className="col-span-2 sm:col-span-1 py-2 text-semibold text-center">
+          <div className="col-span-1 sm:col-span-1 my-2 text-semibold flex justify-center">
+            <span
+              className={cn(
+                populatedRequest.status == requestStatus.requested
+                  ? 'text-orange-500'
+                  : populatedRequest.status == requestStatus.accepted
+                  ? 'text-emerald-500'
+                  : 'text-sky-500'
+              )}
+            >
+              <DiscIcon className="h-6 w-6 sm:hidden" />
+              <span className="hidden sm:block py- px-2 rounded-lg border border-current">
+                {populatedRequest.status}
+              </span>
+            </span>
+          </div>
+
+          <div className="col-span-1 sm:col-span-1 my-2 text-semibold text-center">
             {populatedRequest.price}
           </div>
         </Disclosure.Button>
@@ -118,24 +120,22 @@ const RequestCard: React.FC<Props> = ({
           leaveTo="transform scale-95 opacity-0"
           as={React.Fragment}
         >
-          <Disclosure.Panel className="col-span-full grid grid-cols-3 gap-3 py-2 items-center border-dotted border-t-2">
-            <div className="col-span-2 flex flex-col gap-y-3">
+          <Disclosure.Panel className="col-span-full grid grid-cols-5 gap-3 py-2 items-center border-dotted border-t-2">
+            <div className="col-span-3 flex flex-col gap-y-3">
               <span className="font-semibold">Details:</span>
               <span className="text-gray-700">
                 {populatedRequest.information}
               </span>
             </div>
 
-            <div className="col-span-1 flex flex-col gap-y-3">
+            <div className="col-span-2 flex flex-col gap-y-3">
               <div className="flex gap-2">
                 <span className="font-semibold">Status:</span>
                 <span className="text-gray-700">{populatedRequest.status}</span>
               </div>
               <div className="flex gap-2">
                 <span className="font-semibold">Last Updated on</span>
-                <span className="font-light text-sm text-gray-700">
-                  {dateString}
-                </span>
+                <span className="font-light text-gray-700">{dateString}</span>
               </div>
             </div>
 
@@ -265,4 +265,4 @@ const RequestCard: React.FC<Props> = ({
   );
 };
 
-export default RequestCard;
+export default RequestRow;

@@ -20,7 +20,7 @@ import RequestTable from 'components/request/RequestTable';
 
 type Props = {};
 
-export const getStaticProps: GetStaticProps = ({ params }) => {
+export const getStaticProps: GetStaticProps = () => {
   return {
     props: {
       protected: true,
@@ -58,11 +58,8 @@ const ProfilePage: NextPage<Props> = () => {
   useEffect(() => {
     const populateServices = async () => {
       const res: IService[] = await client.get('api/service');
-      const services = res.filter(
-        (service) => service.seller._id === profile._id
-      );
 
-      setServices(services);
+      setServices(res.filter((service) => service.seller._id === profile._id));
       setIsPopulatingService(false);
     };
 
@@ -111,7 +108,7 @@ const ProfilePage: NextPage<Props> = () => {
                 </div>
               </div>
               {services.length ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
                   {services.map((service) => (
                     <ServiceCard
                       key={service?._id}

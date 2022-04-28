@@ -10,7 +10,7 @@ import ServiceCard from 'components/service/ServiceCard';
 
 type Props = {};
 
-export const getStaticProps: GetStaticProps = ({ params }) => {
+export const getStaticProps: GetStaticProps = () => {
   return {
     props: {
       protected: true,
@@ -19,7 +19,7 @@ export const getStaticProps: GetStaticProps = ({ params }) => {
   };
 };
 
-const ServicesPage: NextPage = (props: Props) => {
+const ServicesPage: NextPage<Props> = () => {
   const { services, setServices } = useSearchStore(
     (state) => ({ services: state.services, setServices: state.setServices }),
     shallow
@@ -83,7 +83,7 @@ const ServicesPage: NextPage = (props: Props) => {
         <div className="col-span-full pt-12">
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 auto-rows-max">
             {filteredServices?.length ? (
-              filteredServices?.map((value, index) => (
+              filteredServices?.map((value) => (
                 <ServiceCard key={value._id.toString()} service={value} />
               ))
             ) : (

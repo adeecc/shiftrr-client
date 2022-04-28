@@ -22,7 +22,7 @@ type PageHitStat = {
   unique: number;
 };
 
-export const getStaticProps: GetStaticProps = ({ params }) => {
+export const getStaticProps: GetStaticProps = () => {
   return {
     props: {
       protected: true,
@@ -31,7 +31,7 @@ export const getStaticProps: GetStaticProps = ({ params }) => {
   };
 };
 
-const CollectionsPage: NextPage = (props: Props) => {
+const CollectionsPage: NextPage<Props> = () => {
   const [trafficData, setTrafficData] = useState<IPageHit[]>([]);
   const [newUserData, setNewUserData] = useState<IUser[]>([]);
   const [salesData, setSalesData] = useState<IRequest[]>([]);

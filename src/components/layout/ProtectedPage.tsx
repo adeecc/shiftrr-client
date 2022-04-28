@@ -29,7 +29,6 @@ const ProtectedPage: React.FC<Props> = ({ pageProps, children }) => {
     return <>{children}</>;
   }
 
-  // TODO: Add Singular layout to cover all cases
   if (pageProps.protected && isLoading) {
     return (
       <div className="h-screen grid place-items-center">
