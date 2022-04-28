@@ -219,14 +219,6 @@ const SkillProfileForm: React.FC<SkillProfileFormProps> = ({
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                     e.preventDefault();
                     setCurrentSkill(e.target.value);
-
-                    // if (e.target.value.at(-1) === ' ') {
-                    //   setFieldValue(
-                    //     'skills',
-                    //     (values.skills || []).concat(currentSkill.trim())
-                    //   );
-                    //   setCurrentSkill('');
-                    // }
                   }}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
