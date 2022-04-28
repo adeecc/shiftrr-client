@@ -220,13 +220,13 @@ const SkillProfileForm: React.FC<SkillProfileFormProps> = ({
                     e.preventDefault();
                     setCurrentSkill(e.target.value);
 
-                    if (e.target.value.at(-1) === ' ') {
-                      setFieldValue(
-                        'skills',
-                        (values.skills || []).concat(currentSkill.trim())
-                      );
-                      setCurrentSkill('');
-                    }
+                    // if (e.target.value.at(-1) === ' ') {
+                    //   setFieldValue(
+                    //     'skills',
+                    //     (values.skills || []).concat(currentSkill.trim())
+                    //   );
+                    //   setCurrentSkill('');
+                    // }
                   }}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {

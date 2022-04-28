@@ -12,32 +12,26 @@ import Sidebar from '.';
 
 type Props = {};
 
-const MobileSidebar: React.FC<Props> = ({}) => {
+const MobileSidebar: React.FC<Props> = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const toggleMenu = () => {
-    if (isMenuOpen) {
-      setIsMenuOpen(false);
-      document.body.style.overflow = '';
-    } else {
-      setIsMenuOpen(true);
-      document.body.style.overflow = 'hidden';
-    }
-  };
-
   useEffect(() => {
-    return function cleanup() {
+    if (isMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
       document.body.style.overflow = '';
-      setIsMenuOpen(false);
-    };
-  }, []);
+    }
+  }, [isMenuOpen]);
 
   return (
     <div className="lg:hidden">
       <nav className="h-20 items-center bg-white border-gray-300 border-b">
         <div className="flex w-full h-full px-10 mx-auto justify-between items-center ">
           <button
-            onClick={toggleMenu}
+            onClick={(e) => {
+              e.preventDefault();
+              setIsMenuOpen(!isMenuOpen);
+            }}
             aria-label="Toggle menu"
             type="button"
             className={cn(styles.burger, '')}
@@ -56,8 +50,11 @@ const MobileSidebar: React.FC<Props> = ({}) => {
       <Transition.Root show={isMenuOpen} as={Fragment}>
         <Dialog
           as="div"
-          className="fixed inset-0 lg:hidden overflow-hidden"
-          onClose={toggleMenu}
+          // className="fixed inset-0 lg:hidden overflow-hidden"
+          className="fixed inset-0 lg:hidden"
+          onClose={() => {
+            setIsMenuOpen(!isMenuOpen);
+          }}
         >
           <Transition.Child
             as={Fragment}
