@@ -6,9 +6,7 @@ import cn from 'classnames';
 
 import styles from 'styles/mobile-menu.module.css';
 
-import { NavItemType } from 'types';
-import { CrossIcon, Logo, MenuIcon } from 'components/icons';
-import NavItem from './NavItem';
+import { Logo, MenuIcon } from 'components/icons';
 import ProfileMenu from './ProfileMenu';
 import Sidebar from '.';
 

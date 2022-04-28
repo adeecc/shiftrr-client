@@ -8,7 +8,7 @@ import RequestTable from 'components/request/RequestTable';
 
 type Props = {};
 
-export const getStaticProps: GetStaticProps = ({ params }) => {
+export const getStaticProps: GetStaticProps = () => {
   return {
     props: {
       protected: true,

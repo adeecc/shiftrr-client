@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import NextImage from 'next/image';
-import NextLink from 'next/link';
 
 import shallow from 'zustand/shallow';
 
@@ -77,10 +76,8 @@ const Profile: React.FC<Props> = ({
   contactNumber,
   bio,
   credits,
-  role,
   status,
   sellerProfile,
-  ...props
 }) => {
   const { profile, isAdmin } = useUserProfileStore(
     (state) => ({ profile: state.profile, isAdmin: state.isAdmin }),
@@ -144,9 +141,8 @@ const Profile: React.FC<Props> = ({
   useEffect(() => {
     const populateServices = async () => {
       const res: IService[] = await client.get('api/service');
-      const services = res.filter((service) => service.seller._id === _id);
 
-      setServices(services);
+      setServices(res.filter((service) => service.seller._id === _id));
       setIsPopulatingService(false);
     };
 

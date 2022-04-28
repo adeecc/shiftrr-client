@@ -49,15 +49,13 @@ const Sidebar: React.FC<Props> = () => {
     isAdmin: state.isAdmin,
   }));
 
-  const { pendingRequests, completedRequests, populateRequests } =
-    useUserRequestsStore(
-      (state) => ({
-        pendingRequests: state.pendingRequests,
-        completedRequests: state.completedRequests,
-        populateRequests: state.populateRequests,
-      }),
-      shallow
-    );
+  const { pendingRequests, populateRequests } = useUserRequestsStore(
+    (state) => ({
+      pendingRequests: state.pendingRequests,
+      populateRequests: state.populateRequests,
+    }),
+    shallow
+  );
 
   useEffect(() => {
     populateRequests(profile!._id);

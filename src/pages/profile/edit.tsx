@@ -6,7 +6,7 @@ import EditProfile from 'components/user/EditProfile';
 
 type Props = {};
 
-export const getStaticProps: GetStaticProps = ({ params }) => {
+export const getStaticProps: GetStaticProps = () => {
   return {
     props: {
       protected: true,

@@ -3,7 +3,6 @@ import cn from 'classnames';
 
 import RequestRow from './RequestRow';
 import { IRequest } from 'types';
-import { requestStatus } from 'types/request';
 
 interface Props {
   requests: IRequest[];

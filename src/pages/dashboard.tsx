@@ -20,7 +20,7 @@ import RequestTable from 'components/request/RequestTable';
 
 type Props = {};
 
-export const getStaticProps: GetStaticProps = ({ params }) => {
+export const getStaticProps: GetStaticProps = () => {
   return {
     props: {
       protected: true,
@@ -58,11 +58,8 @@ const ProfilePage: NextPage<Props> = () => {
   useEffect(() => {
     const populateServices = async () => {
       const res: IService[] = await client.get('api/service');
-      const services = res.filter(
-        (service) => service.seller._id === profile._id
-      );
 
-      setServices(services);
+      setServices(res.filter((service) => service.seller._id === profile._id));
       setIsPopulatingService(false);
     };
 

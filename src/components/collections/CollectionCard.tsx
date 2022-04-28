@@ -1,9 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import NextLink from 'next/link';
+import React from 'react';
 import cn from 'classnames';
 
-import { IService } from 'types';
-import CreateRequestFormModal from 'components/request/CreateRequestFormModal';
 import { ArrowDownRightIcon, ArrowUpRightIcon } from 'components/icons';
 
 interface Props {
@@ -23,8 +20,6 @@ const CollectionCard: React.FC<Props> = ({
   delta,
   comparedTo,
 }) => {
-  useEffect(() => {}, []);
-
   return (
     <div className="col-span-1 flex flex-col justify-between h-28 bg-white rounded p-4 ">
       <div className="col-span-full flex justify-between text-gray-500 ">

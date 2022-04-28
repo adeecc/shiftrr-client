@@ -15,10 +15,7 @@ interface Props {
   isBuyer: boolean;
 }
 
-const RequestCard: React.FC<Props> = ({
-  populatedRequest,
-  isBuyer = false,
-}) => {
+const RequestRow: React.FC<Props> = ({ populatedRequest, isBuyer = false }) => {
   const profile = useUserProfileStore((state) => state.profile!);
 
   const [requestReviewModalIsOpen, setRequestReviewModalIsOpen] =
@@ -265,4 +262,4 @@ const RequestCard: React.FC<Props> = ({
   );
 };
 
-export default RequestCard;
+export default RequestRow;

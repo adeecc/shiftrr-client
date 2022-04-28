@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import cn from 'classnames';
 
 import { StarIcon } from 'components/icons';
@@ -29,7 +29,7 @@ const Rating: React.FC<Props> = ({
   if (setValue)
     return (
       <div className={finalClassName}>
-        {[...Array(5)].map((x, i) => (
+        {[...Array(5)].map((_x, i) => (
           <button
             key={i}
             onClick={(e) => {
@@ -49,7 +49,7 @@ const Rating: React.FC<Props> = ({
   else
     return (
       <div className={finalClassName}>
-        {[...Array(5)].map((x, i) =>
+        {[...Array(5)].map((_x, i) =>
           Math.round(value) <= i ? (
             <StarIcon className={finalStartClassName} fill="None" />
           ) : (

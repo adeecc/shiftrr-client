@@ -25,14 +25,14 @@ const resolver = async (config: AxiosRequestConfig) => {
 
 export const client = {
   get: async (url: string, config?: AxiosRequestConfig) => {
-    return await resolver({
+    return resolver({
       ...config,
       url,
       method: 'get',
     });
   },
   post: async (url: string, data?: any, config?: AxiosRequestConfig) => {
-    return await resolver({
+    return resolver({
       ...config,
       url,
       data,
@@ -40,7 +40,7 @@ export const client = {
     });
   },
   put: async (url: string, data?: any, config?: AxiosRequestConfig) => {
-    return await resolver({
+    return resolver({
       ...config,
       url,
       data,
@@ -48,7 +48,7 @@ export const client = {
     });
   },
   delete: async (url: string, config?: AxiosRequestConfig) => {
-    return await resolver({
+    return resolver({
       ...config,
       url,
       method: 'delete',
