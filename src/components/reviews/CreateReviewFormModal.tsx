@@ -1,5 +1,5 @@
-import React, { Fragment, useMemo } from 'react';
-import { Formik, Field, Form } from 'formik';
+import React, { Fragment, useMemo, useState } from 'react';
+import { Formik, Field, Form, ErrorMessage } from 'formik';
 import { Dialog, Transition } from '@headlessui/react';
 
 import { client } from 'lib/api/axiosClient';
@@ -20,6 +20,8 @@ const CreateReviewFormModal: React.FC<Props> = ({
   isOpen,
   setIsOpen,
 }) => {
+  const [showSubmitted, setShowSubmitted] = useState(false);
+
   const ReviewTitle = useMemo(() => {
     switch (reviewFor) {
       case ReviewFor.buyer:
@@ -78,17 +80,19 @@ const CreateReviewFormModal: React.FC<Props> = ({
                   rating: 5,
                 }}
                 onSubmit={async (values, { setSubmitting, resetForm }) => {
-                  const res = await client.post(`/api/reviews/${reviewFor}`, {
+                  await client.post(`/api/reviews/${reviewFor}`, {
                     request_id: request._id,
                     comment: values.comment,
                     rating: values.rating,
                   });
-
-                  console.table(res);
-
                   setSubmitting(false);
                   resetForm();
-                  setIsOpen(false);
+
+                  setShowSubmitted(true);
+                  setTimeout(() => {
+                    setShowSubmitted(false);
+                    setIsOpen(false);
+                  }, 1500);
                 }}
                 validate={(values) => {
                   const errors: {
@@ -96,7 +100,8 @@ const CreateReviewFormModal: React.FC<Props> = ({
                     description?: string;
                     startingPrice?: string;
                   } = {};
-                  if (!values.comment) errors.comment = 'Required';
+                  if (!values.comment)
+                    errors.comment = 'This field is required';
 
                   return errors;
                 }}
@@ -151,7 +156,7 @@ const CreateReviewFormModal: React.FC<Props> = ({
                           htmlFor="comment"
                           className="font-semibold text-sm text-gray-700"
                         >
-                          Review
+                          Review*
                         </label>
                         <Field
                           name="comment"
@@ -160,6 +165,9 @@ const CreateReviewFormModal: React.FC<Props> = ({
                           placeholder="Please make it..."
                           className="focus:ring-accent-300 focus:border-accent-300 w-full h-36 shadow-sm h- border-gray-300 rounded-md"
                         />
+                        <div className="text-rose-500 text-xs">
+                          <ErrorMessage name="comment" />
+                        </div>
                       </div>
                       <div className="col-span-full flex flex-col gap-1">
                         <Rating
@@ -169,26 +177,35 @@ const CreateReviewFormModal: React.FC<Props> = ({
                           }}
                         />
                       </div>
-                      <div className="col-span-full flex justify-end gap-3">
-                        <button
-                          type="button"
-                          disabled={isSubmitting}
-                          onClick={(e) => {
-                            e.preventDefault();
-                            resetForm();
-                            setIsOpen(false);
-                          }}
-                          className="text-accent-100 border-2 border-accent-100 px-3 py-2 rounded-md"
-                        >
-                          Cancel
-                        </button>
-                        <button
-                          type="submit"
-                          disabled={isSubmitting}
-                          className="bg-accent-100 text-white px-3 py-2 rounded-md"
-                        >
-                          {isSubmitting ? 'Saving...' : 'Save'}
-                        </button>
+
+                      <div className="col-span-fulll flex justify-between">
+                        <div className="flex justify-end gap-3">
+                          <button
+                            type="button"
+                            disabled={isSubmitting}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              resetForm();
+                              setIsOpen(false);
+                            }}
+                            className="text-accent-100 border-2 border-accent-100 px-3 py-2 rounded-md"
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            type="submit"
+                            disabled={isSubmitting}
+                            className="bg-accent-100 text-white px-3 py-2 rounded-md"
+                          >
+                            {isSubmitting ? 'Saving...' : 'Save'}
+                          </button>
+                        </div>
+
+                        {showSubmitted && (
+                          <span className="text-semibold text-gray-500">
+                            Saved!
+                          </span>
+                        )}
                       </div>
                     </div>
                   </Form>

@@ -1,5 +1,5 @@
-import React, { Fragment } from 'react';
-import { Formik, Field, Form } from 'formik';
+import React, { Fragment, useState } from 'react';
+import { Formik, Field, Form, ErrorMessage } from 'formik';
 import { Dialog, Transition } from '@headlessui/react';
 
 import { client } from 'lib/api/axiosClient';
@@ -18,6 +18,8 @@ const CreateRequestFormModal: React.FC<Props> = ({
   isOpen,
   setIsOpen,
 }) => {
+  const [showSubmitted, setShowSubmitted] = useState(false);
+
   return (
     <Transition.Root show={isOpen} as={Fragment}>
       <Dialog
@@ -66,17 +68,22 @@ const CreateRequestFormModal: React.FC<Props> = ({
                   });
                   setSubmitting(false);
                   resetForm();
-                  setIsOpen(false);
+
+                  setShowSubmitted(true);
+                  setTimeout(() => {
+                    setShowSubmitted(false);
+                    setIsOpen(false);
+                  }, 1500);
                 }}
                 validate={(values) => {
                   const errors: {
-                    name?: string;
-                    description?: string;
-                    startingPrice?: string;
+                    information?: string;
+                    price?: string;
                   } = {};
-                  if (!values.information) errors.description = 'Required';
+                  if (!values.information)
+                    errors.information = 'This field is required.';
                   if (values.price < service.startingPrice)
-                    errors.startingPrice = `Price must be greater than ${service.startingPrice}`;
+                    errors.price = `Price must be greater than ${service.startingPrice}`;
 
                   return errors;
                 }}
@@ -126,6 +133,9 @@ const CreateRequestFormModal: React.FC<Props> = ({
                           placeholder="Please make it..."
                           className="focus:ring-accent-300 focus:border-accent-300 w-full shadow-sm  border-gray-300 rounded-md"
                         />
+                        <div className="text-rose-500 text-xs">
+                          <ErrorMessage name="information" />
+                        </div>
                       </div>
                       <div className="col-span-full flex flex-col gap-1">
                         <label
@@ -140,27 +150,38 @@ const CreateRequestFormModal: React.FC<Props> = ({
                           placeholder="Please make it..."
                           className="focus:ring-accent-300 focus:border-accent-300 w-full shadow-sm  border-gray-300 rounded-md"
                         />
+                        <div className="text-rose-500 text-xs">
+                          <ErrorMessage name="price" />
+                        </div>
                       </div>
-                      <div className="col-span-full flex justify-end gap-3">
-                        <button
-                          type="button"
-                          disabled={isSubmitting}
-                          onClick={(e) => {
-                            e.preventDefault();
-                            resetForm();
-                            setIsOpen(false);
-                          }}
-                          className="text-accent-100 border-2 border-accent-100 px-3 py-2 rounded-md"
-                        >
-                          Cancel
-                        </button>
-                        <button
-                          type="submit"
-                          disabled={isSubmitting}
-                          className="bg-accent-100 text-white px-3 py-2 rounded-md"
-                        >
-                          {isSubmitting ? 'Saving...' : 'Save'}
-                        </button>
+                      <div className="col-span-full flex justify-between">
+                        <div className="flex justify-end gap-3">
+                          <button
+                            type="button"
+                            disabled={isSubmitting}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              resetForm();
+                              setIsOpen(false);
+                            }}
+                            className="text-accent-100 border-2 border-accent-100 px-3 py-2 rounded-md"
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            type="submit"
+                            disabled={isSubmitting}
+                            className="bg-accent-100 text-white px-3 py-2 rounded-md"
+                          >
+                            {isSubmitting ? 'Saving...' : 'Save'}
+                          </button>
+                        </div>
+
+                        {showSubmitted && (
+                          <span className="text-semibold text-gray-500">
+                            Saved!
+                          </span>
+                        )}
                       </div>
                     </div>
                   </Form>

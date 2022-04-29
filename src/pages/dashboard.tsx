@@ -37,10 +37,10 @@ const ProfilePage: NextPage<Props> = () => {
   const [isPopulatingService, setIsPopulatingService] = useState(true);
   const [isPopulatingRequests, setIsPopulatingRequests] = useState(true);
 
-  const { services, setServices } = useUserServicesStore(
+  const { services, populateServices } = useUserServicesStore(
     (state) => ({
       services: state.services,
-      setServices: state.setServices,
+      populateServices: state.populateServices,
     }),
     shallow
   );
@@ -56,15 +56,13 @@ const ProfilePage: NextPage<Props> = () => {
     );
 
   useEffect(() => {
-    const populateServices = async () => {
-      const res: IService[] = await client.get('api/service');
-
-      setServices(res.filter((service) => service.seller._id === profile._id));
+    const _populateServices = async () => {
+      await populateServices(profile!._id);
       setIsPopulatingService(false);
     };
 
-    populateServices();
-  }, [modalIsOpen, profile._id, setServices]); // modalIsOpen as parameter so the service can be populated whenever the modal closes. Ideally, extract our the service platform to a different component
+    _populateServices();
+  }, [modalIsOpen, profile, populateServices]); // modalIsOpen as parameter so the service can be populated whenever the modal closes. Ideally, extract our the service platform to a different component
 
   useEffect(() => {
     const _populateRequests = async () => {
@@ -107,7 +105,7 @@ const ProfilePage: NextPage<Props> = () => {
                   />
                 </div>
               </div>
-              {services.length ? (
+              {services?.length ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
                   {services.map((service) => (
                     <ServiceCard

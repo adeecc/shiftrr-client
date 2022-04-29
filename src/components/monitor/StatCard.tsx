@@ -39,7 +39,7 @@ const CollectionCard: React.FC<Props> = ({
               delta > 0 ? 'text-teal-500' : 'text-rose-500'
             )}
           >
-            {delta}%
+            {delta.toFixed(2)}%
             {delta > 0 ? (
               <ArrowUpRightIcon className="h-4 w-4" />
             ) : (

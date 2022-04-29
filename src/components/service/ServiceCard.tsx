@@ -4,6 +4,8 @@ import cn from 'classnames';
 
 import { IService } from 'types';
 import CreateRequestFormModal from 'components/request/CreateRequestFormModal';
+import { useUserProfileStore, useUserServicesStore } from 'lib/store/user';
+import { client } from 'lib/api/axiosClient';
 
 interface Props {
   service: IService;
@@ -12,6 +14,17 @@ interface Props {
 
 const ServiceCard: React.FC<Props> = ({ service, className }) => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
+  const profile = useUserProfileStore((state) => state.profile);
+  const populateServices = useUserServicesStore(
+    (state) => state.populateServices
+  );
+
+  const handleDeleteService = async (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    await client.delete(`/api/service/${service._id}`);
+    await populateServices(profile!._id);
+  };
 
   return (
     <div className="">
@@ -52,15 +65,24 @@ const ServiceCard: React.FC<Props> = ({ service, className }) => {
             <span className="text-xs text-gray-500">starting price</span>
           </div>
 
-          <button
-            className="px-4 text-accent-300 font-semibold outline-none border border-accent-300 hover:text-white hover:bg-accent-100 transition-colors rounded-md"
-            onClick={(e) => {
-              e.preventDefault();
-              setModalIsOpen(true);
-            }}
-          >
-            Book now
-          </button>
+          {service.seller._id === profile?._id ? (
+            <button
+              className="px-4 text-accent-300 font-semibold outline-none border border-accent-300 hover:text-white hover:bg-accent-100 transition-colors rounded-md"
+              onClick={handleDeleteService}
+            >
+              Delete
+            </button>
+          ) : (
+            <button
+              className="px-4 text-accent-300 font-semibold outline-none border border-accent-300 hover:text-white hover:bg-accent-100 transition-colors rounded-md"
+              onClick={(e) => {
+                e.preventDefault();
+                setModalIsOpen(true);
+              }}
+            >
+              Book now
+            </button>
+          )}
 
           <CreateRequestFormModal
             service={service}
