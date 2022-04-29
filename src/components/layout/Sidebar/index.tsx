@@ -121,28 +121,28 @@ const Sidebar: React.FC<Props> = () => {
         {isAdmin && (
           <div className="flex flex-col p-1">
             <NavItem
-              href="/collections"
+              href="/monitor"
               className="flex items-center gap-x-4 py-3 rounded px-5"
             >
               <CollectionIcon className="h-6 w-6" />
-              Collections
+              Monitor
             </NavItem>
 
             <NavItem
-              href="/service"
+              href="/monitor/users"
               className="flex items-center gap-x-4 py-3 rounded px-5"
             >
               <UsersIcon className="h-6 w-6" />
-              Review Users
+              Monitor Users
             </NavItem>
 
             <NavItem
-              href="/profile/jobs/pending"
+              href="/monitor/services"
               className="flex justify-between items-center gap-x-4 px-5 py-1 rounded"
             >
               <div className="flex gap-x-4">
                 <PendingOffersIcon className="h-6 w-6" />
-                Review Services
+                Monitor Services
               </div>
               <span className="text-gray-500 font-semibold bg-gray-100 px-2 py-2 rounded">
                 {pendingRequests?.length}
@@ -150,11 +150,11 @@ const Sidebar: React.FC<Props> = () => {
             </NavItem>
 
             <NavItem
-              href="/profile/jobs/history"
+              href="/monitor/requests"
               className="flex items-center gap-x-4 py-3 rounded px-5"
             >
               <JobHistoryIcon className="h-6 w-6" />
-              Review Requests
+              Monitor Requests
             </NavItem>
           </div>
         )}

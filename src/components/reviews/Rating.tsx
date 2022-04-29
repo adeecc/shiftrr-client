@@ -38,9 +38,13 @@ const Rating: React.FC<Props> = ({
             }}
           >
             {value <= i ? (
-              <StarIcon className={finalStartClassName} fill="None" />
+              <StarIcon key={i} className={finalStartClassName} fill="None" />
             ) : (
-              <StarIcon className={finalStartClassName} fill="currentColor" />
+              <StarIcon
+                key={i}
+                className={finalStartClassName}
+                fill="currentColor"
+              />
             )}
           </button>
         ))}
@@ -51,9 +55,13 @@ const Rating: React.FC<Props> = ({
       <div className={finalClassName}>
         {[...Array(5)].map((_x, i) =>
           Math.round(value) <= i ? (
-            <StarIcon className={finalStartClassName} fill="None" />
+            <StarIcon key={i} className={finalStartClassName} fill="None" />
           ) : (
-            <StarIcon className={finalStartClassName} fill="currentColor" />
+            <StarIcon
+              key={i}
+              className={finalStartClassName}
+              fill="currentColor"
+            />
           )
         )}
       </div>

@@ -49,8 +49,8 @@ const ProtectedPage: React.FC<Props> = ({ pageProps, children }) => {
     pageProps.protected &&
     !isLoading &&
     profile &&
-    pageProps.profileTypes &&
-    pageProps.profileTypes.indexOf(profile.role) === -1
+    pageProps.userTypes &&
+    pageProps.userTypes.indexOf(profile.role) === -1
   ) {
     return (
       <div className="h-screen grid place-items-center">

@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { GetStaticProps, NextPage } from 'next';
 import Container from 'components/common/Container';
-import CollectionCard from 'components/collections/CollectionCard';
+import StatCard from 'components/monitor/StatCard';
 import {
   LineChartIcon,
   MoneyIcon,
@@ -11,8 +11,8 @@ import {
 import { IPageHit, IRequest, IUser } from 'types';
 import { client } from 'lib/api/axiosClient';
 import { requestStatus } from 'types/request';
-import SalesValueChart from 'components/collections/SalesValueChart';
-import TotalOrdersChart from 'components/collections/TotalOrdersChar';
+import SalesValueChart from 'components/monitor/SalesValueChart';
+import TotalOrdersChart from 'components/monitor/TotalOrdersChar';
 
 type Props = {};
 
@@ -26,7 +26,7 @@ export const getStaticProps: GetStaticProps = () => {
   return {
     props: {
       protected: true,
-      // userTypes: ['user'],
+      userTypes: ['admin'],
     },
   };
 };
@@ -43,8 +43,8 @@ const CollectionsPage: NextPage<Props> = () => {
     initialValue: any = 0,
     reduction = (prev: any, _curr: any): any => prev + 1
   ) => {
-    const obj = data?.reduce<Record<string, number>>((prev, item) => {
-      const date = new Date(item.updateAt);
+    const obj = data.reduce<Record<string, number>>((prev, item) => {
+      const date = new Date(item.updatedAt);
       const group = `${date.getUTCFullYear()}-${date.getUTCMonth()}`;
 
       prev[group] = prev[group] || initialValue;
@@ -52,7 +52,13 @@ const CollectionsPage: NextPage<Props> = () => {
       return prev;
     }, {} as Record<string, number>);
 
-    const dataByMonth = Object.entries(obj).sort();
+    const dataByMonth = Object.entries(obj).sort((a, b) => {
+      if (a[0] < b[0]) return -1;
+      if (a[0] === b[0]) return 0;
+      else return 1;
+    });
+
+    console.log(dataByMonth);
     const statThisMonth = (dataByMonth.at(-1)?.at(1) as number) || 0;
     const statLastMonth = (dataByMonth.at(-2)?.at(1) as number) || 0;
 
@@ -91,7 +97,7 @@ const CollectionsPage: NextPage<Props> = () => {
       res.push({
         pageName: key,
         visitors: groupedByLogicalEnpoint[key].length,
-        unique: new Set(groupedByLogicalEnpoint[key].map((item) => item.userId))
+        unique: new Set(groupedByLogicalEnpoint[key].map((item) => item.user))
           .size,
       });
     }
@@ -156,27 +162,27 @@ const CollectionsPage: NextPage<Props> = () => {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-          <CollectionCard
+          <StatCard
             title="TRAFFIC"
             Icon={LineChartIcon}
             prefix="hits"
             {...trafficStats}
             comparedTo="previous month"
           />
-          <CollectionCard
+          <StatCard
             title="NEW USERS"
             Icon={UserAddIcon}
             {...newUserStats}
             comparedTo="previous month"
           />
-          <CollectionCard
+          <StatCard
             title="SALES"
             Icon={MoneyIcon}
             prefix="₹"
             {...newSalesStats}
             comparedTo="previous month"
           />
-          <CollectionCard
+          <StatCard
             title="NEW SERVICES"
             Icon={TicketIcon}
             {...newServiceStats}

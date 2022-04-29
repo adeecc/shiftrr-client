@@ -1,5 +1,5 @@
-import React, { Fragment } from 'react';
-import { Formik, Field, Form } from 'formik';
+import React, { Fragment, useState } from 'react';
+import { Formik, Field, Form, ErrorMessage } from 'formik';
 import { Dialog, Transition } from '@headlessui/react';
 
 import { client } from 'lib/api/axiosClient';
@@ -10,6 +10,7 @@ type Props = {
 };
 
 const CreateServiceFormModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
+  const [showSubmitted, setShowSubmitted] = useState(false);
   return (
     <Transition.Root show={isOpen} as={Fragment}>
       <Dialog
@@ -54,7 +55,12 @@ const CreateServiceFormModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
 
                   setSubmitting(false);
                   resetForm();
-                  setIsOpen(false);
+
+                  setShowSubmitted(true);
+                  setTimeout(() => {
+                    setShowSubmitted(false);
+                    setIsOpen(false);
+                  }, 1500);
                 }}
                 validate={(values) => {
                   const errors: {
@@ -62,8 +68,9 @@ const CreateServiceFormModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                     description?: string;
                     startingPrice?: string;
                   } = {};
-                  if (!values.name) errors.name = 'Required';
-                  if (!values.description) errors.description = 'Required';
+                  if (!values.name) errors.name = 'This field is required';
+                  if (!values.description)
+                    errors.description = 'This field is required';
                   if (values.startingPrice <= 0)
                     errors.startingPrice =
                       'Starting Price must be greater than 0';
@@ -79,20 +86,23 @@ const CreateServiceFormModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                           htmlFor="name"
                           className="font-semibold text-sm text-gray-700"
                         >
-                          What will you do?
+                          What will you do?*
                         </label>
                         <Field
                           name="name"
                           type="text"
                           className="focus:ring-accent-300 focus:border-accent-300 w-full shadow-sm  border-gray-300 rounded-md"
                         />
+                        <div className="text-rose-500 text-xs">
+                          <ErrorMessage name="name" />
+                        </div>
                       </div>
                       <div className="col-span-full flex flex-col gap-1">
                         <label
                           htmlFor="description"
                           className="font-semibold text-sm text-gray-700"
                         >
-                          A bit more detail
+                          A bit more detail*
                         </label>
                         <Field
                           name="description"
@@ -100,40 +110,54 @@ const CreateServiceFormModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                           as="textarea"
                           className="focus:ring-accent-300 focus:border-accent-300 w-full shadow-sm h-36 border-gray-300 rounded-md"
                         />
+                        <div className="text-rose-500 text-xs">
+                          <ErrorMessage name="description" />
+                        </div>
                       </div>
                       <div className="col-span-full flex flex-col gap-1">
                         <label
                           htmlFor="startingPrice"
                           className="font-semibold text-sm text-gray-700"
                         >
-                          Starting Price
+                          Starting Price*
                         </label>
                         <Field
                           name="startingPrice"
                           type="text"
                           className="focus:ring-accent-300 focus:border-accent-300 w-full shadow-sm  border-gray-300 rounded-md"
                         />
+                        <div className="text-rose-500 text-xs">
+                          <ErrorMessage name="startingPrice" />
+                        </div>
                       </div>
-                      <div className="col-span-full flex justify-end gap-3">
-                        <button
-                          type="button"
-                          disabled={isSubmitting}
-                          onClick={(e) => {
-                            e.preventDefault();
-                            resetForm();
-                            setIsOpen(false);
-                          }}
-                          className="text-accent-100 border-2 border-accent-100 px-3 py-2 rounded-md"
-                        >
-                          Cancel
-                        </button>
-                        <button
-                          type="submit"
-                          disabled={isSubmitting}
-                          className="bg-accent-100 text-white px-3 py-2 rounded-md"
-                        >
-                          {isSubmitting ? 'Saving...' : 'Save'}
-                        </button>
+                      <div className="col-span-full flex justify-between">
+                        <div className="flex justify-end gap-3">
+                          <button
+                            type="button"
+                            disabled={isSubmitting}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              resetForm();
+                              setIsOpen(false);
+                            }}
+                            className="text-accent-100 border-2 border-accent-100 px-3 py-2 rounded-md"
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            type="submit"
+                            disabled={isSubmitting}
+                            className="bg-accent-100 text-white px-3 py-2 rounded-md"
+                          >
+                            {isSubmitting ? 'Saving...' : 'Save'}
+                          </button>
+                        </div>
+
+                        {showSubmitted && (
+                          <span className="text-semibold text-gray-500">
+                            Saved!
+                          </span>
+                        )}
                       </div>
                     </div>
                   </Form>
