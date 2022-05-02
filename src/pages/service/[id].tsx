@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
+import useSWR from 'swr';
 
 import { useUserProfileStore } from 'lib/store/user';
 import { client } from 'lib/api/axiosClient';
@@ -26,14 +27,12 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
 };
 
 const ServiceDetailPage: NextPage<Props> = ({ id }) => {
-  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const router = useRouter();
   const profile = useUserProfileStore((state) => state.profile);
 
+  const [modalIsOpen, setModalIsOpen] = useState(false);
   const [service, setService] = useState<IService>();
-  const [isServiceLoading, setIsServiceLoading] = useState(true);
-
   const [requestReviews, setRequestReviews] = useState<IRequestReview[]>([]);
-  const [isLoadingRequestReviews, setIsLoadingRequestReviews] = useState(true);
 
   const overallRating = useMemo(() => {
     const total = requestReviews?.reduce(
@@ -44,35 +43,30 @@ const ServiceDetailPage: NextPage<Props> = ({ id }) => {
     return total / requestReviews?.length;
   }, [requestReviews]);
 
-  const router = useRouter();
-
   const isSeller = useMemo(
     () => profile?._id == service?.seller,
     [profile?._id, service?.seller]
   );
 
+  const { data: serviceData, error: serviceError } = useSWR(
+    `api/service/${id}`,
+    client.get
+  );
+
+  const { data: reviewData, error: reviewError } = useSWR(
+    `api/reviews/request/ofservice/${id}`,
+    client.get
+  );
+
   useEffect(() => {
-    const _getServiceDetail = async () => {
-      const _service = await client.get(`api/service/${id}`);
-      setService(_service);
-      setIsServiceLoading(false);
-    };
-
-    _getServiceDetail();
-  }, [id]);
+    setService(serviceData);
+    console.log(serviceData);
+  }, [id, serviceData, setService]);
 
   useEffect(() => {
-    const populateRequestReviews = async () => {
-      const res: IRequestReview[] = await client.get(
-        `api/reviews/request/ofservice/${id}`
-      );
-
-      setRequestReviews(res);
-      setIsLoadingRequestReviews(false);
-    };
-
-    populateRequestReviews();
-  }, [id]);
+    setRequestReviews(reviewData);
+    console.log(reviewData);
+  }, [id, reviewData, setRequestReviews]);
 
   const deleteGigHandler = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
@@ -96,9 +90,9 @@ const ServiceDetailPage: NextPage<Props> = ({ id }) => {
         {/* Gig Details */}
         <div className="col-span-full md:col-span-4">
           <div className="flex flex-col gap-y-4 rounded-lg bg-white p-6">
-            {isServiceLoading ? (
-              'Loading...'
-            ) : service ? (
+            {service === undefined ? (
+              'Service Not Found :('
+            ) : (
               <div className="flex flex-col gap-y-4">
                 <div className="grid grid-cols-4 gap-4 items-center pb-4 border-b">
                   <div className="col-span-3 flex items-center gap-x-2">
@@ -122,8 +116,8 @@ const ServiceDetailPage: NextPage<Props> = ({ id }) => {
                         </button>
 
                         <CreateRequestFormModal
-                          service={service!}
-                          seller={service!.seller}
+                          service={service}
+                          seller={service.seller}
                           isOpen={modalIsOpen}
                           setIsOpen={setModalIsOpen}
                         />
@@ -146,8 +140,6 @@ const ServiceDetailPage: NextPage<Props> = ({ id }) => {
                   </h4>
                 </div>
               </div>
-            ) : (
-              'Service Not Found :('
             )}
           </div>
         </div>
@@ -155,10 +147,11 @@ const ServiceDetailPage: NextPage<Props> = ({ id }) => {
         {/* Seller Details */}
         <div className="col-span-full md:col-span-2">
           <div className="rounded-lg bg-white p-6">
-            {isServiceLoading
-              ? 'Loading...'
-              : service &&
-                service.seller && <SellerProfileCard {...service.seller} />}
+            {service?.seller ? (
+              <SellerProfileCard {...service.seller} />
+            ) : (
+              'Loading...'
+            )}
           </div>
         </div>
 
@@ -173,9 +166,7 @@ const ServiceDetailPage: NextPage<Props> = ({ id }) => {
               </div>
             </div>
             <div className="flex flex-col">
-              {isLoadingRequestReviews ? (
-                <span className="text-sm text-gray-500">Loading...</span>
-              ) : requestReviews?.length ? (
+              {requestReviews?.length ? (
                 <div className="flex flex-col gap-y-5">
                   {requestReviews.map((review) => (
                     <ReviewCard

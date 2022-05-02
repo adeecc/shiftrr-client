@@ -2,8 +2,11 @@ import React, { Fragment, useState } from 'react';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import { Dialog, Transition } from '@headlessui/react';
 
+import { useSWRConfig } from 'swr';
+
 import { client } from 'lib/api/axiosClient';
 import { IService, IUser } from 'types';
+import { useUserProfileStore } from 'lib/store/user';
 
 type Props = {
   service: IService;
@@ -19,6 +22,8 @@ const CreateRequestFormModal: React.FC<Props> = ({
   setIsOpen,
 }) => {
   const [showSubmitted, setShowSubmitted] = useState(false);
+  const { mutate } = useSWRConfig();
+  const profile = useUserProfileStore((state) => state.profile);
 
   return (
     <Transition.Root show={isOpen} as={Fragment}>
@@ -70,6 +75,8 @@ const CreateRequestFormModal: React.FC<Props> = ({
                   resetForm();
 
                   setShowSubmitted(true);
+                  mutate(`api/user/${profile?._id}/requests`); // invalidate the cache
+
                   setTimeout(() => {
                     setShowSubmitted(false);
                     setIsOpen(false);

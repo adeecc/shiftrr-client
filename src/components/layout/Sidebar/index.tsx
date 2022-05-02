@@ -2,6 +2,8 @@ import React, { useEffect } from 'react';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 
+import useSWR from 'swr';
+
 import cn from 'classnames';
 
 import {
@@ -17,6 +19,7 @@ import MobileSidebar from './MobileSidebar';
 import ProfileMenu from './ProfileMenu';
 import { useUserProfileStore, useUserRequestsStore } from 'lib/store/user';
 import shallow from 'zustand/shallow';
+import { client } from 'lib/api/axiosClient';
 
 type NavItemProps = {
   href: string;
@@ -49,18 +52,22 @@ const Sidebar: React.FC<Props> = () => {
     isAdmin: state.isAdmin,
   }));
 
-  const { pendingRequests, populateRequests } = useUserRequestsStore(
+  const { pendingRequests, setRequests } = useUserRequestsStore(
     (state) => ({
       pendingRequests: state.pendingRequests,
-      populateRequests: state.populateRequests,
+      setRequests: state.setRequests,
     }),
     shallow
   );
 
+  const { data: requestData, error } = useSWR(
+    `api/user/${profile?._id}/requests`,
+    client.get
+  );
+
   useEffect(() => {
-    populateRequests(profile!._id);
-    // Load count of num pending requests
-  }, [populateRequests, profile]);
+    setRequests(requestData || []);
+  }, [profile, requestData, setRequests]);
 
   return (
     <>

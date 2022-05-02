@@ -12,7 +12,7 @@ interface Props {
   comparedTo: string;
 }
 
-const CollectionCard: React.FC<Props> = ({
+const StatCard: React.FC<Props> = ({
   title,
   Icon,
   prefix = '',
@@ -53,4 +53,4 @@ const CollectionCard: React.FC<Props> = ({
   );
 };
 
-export default CollectionCard;
+export default StatCard;
