@@ -80,7 +80,7 @@ const CreateReviewFormModal: React.FC<Props> = ({
                   rating: 5,
                 }}
                 onSubmit={async (values, { setSubmitting, resetForm }) => {
-                  await client.post(`/api/reviews/${reviewFor}`, {
+                  await client.post(`api/reviews/${reviewFor}`, {
                     request_id: request._id,
                     comment: values.comment,
                     rating: values.rating,

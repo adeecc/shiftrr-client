@@ -4,8 +4,10 @@ import cn from 'classnames';
 
 import { IService } from 'types';
 import CreateRequestFormModal from 'components/request/CreateRequestFormModal';
-import { useUserProfileStore, useUserServicesStore } from 'lib/store/user';
+import { useUserProfileStore } from 'lib/store/user';
 import { client } from 'lib/api/axiosClient';
+
+import { useSWRConfig } from 'swr';
 
 interface Props {
   service: IService;
@@ -14,16 +16,18 @@ interface Props {
 
 const ServiceCard: React.FC<Props> = ({ service, className }) => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
+
+  const { mutate } = useSWRConfig();
+
   const profile = useUserProfileStore((state) => state.profile);
-  const populateServices = useUserServicesStore(
-    (state) => state.populateServices
-  );
 
   const handleDeleteService = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
-    await client.delete(`/api/service/${service._id}`);
-    await populateServices(profile!._id);
+    e.preventDefault();
+    await client.delete(`api/service/${service._id}`);
+    mutate(`api/user/${profile!._id}/services`);
+    mutate(`api/service`);
   };
 
   return (

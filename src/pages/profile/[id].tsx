@@ -1,7 +1,8 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 
-import { useUserProfileStore } from 'lib/store/user';
+import useSWR from 'swr';
+
 import { client } from 'lib/api/axiosClient';
 import Profile from 'components/user/Profile';
 import Container from 'components/common/Container';
@@ -20,20 +21,26 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
 };
 
 const UserPage: NextPage<Props> = (props) => {
-  const profile = useUserProfileStore((state) => state.profile);
   const id = props.id;
-  const isSelf = useMemo(() => profile?._id == id, [profile?._id, id]);
 
   const [user, setUser] = useState();
+  const { data: userData, error: userError } = useSWR(
+    `api/user/${id}`,
+    client.get
+  );
 
   useEffect(() => {
-    const _getUserProfile = async () => {
-      const res = await client.get(`api/user/${id}`);
-      setUser(res);
-    };
+    setUser(userData);
+  }, [userData]);
 
-    _getUserProfile();
-  }, [isSelf, id]);
+  if (userError)
+    return (
+      <Container>
+        <div className="grid w-full place-items-center text-gray-600">
+          Something went wrong. Please refresh and try again!
+        </div>
+      </Container>
+    );
 
   return user ? (
     <Profile {...user} />

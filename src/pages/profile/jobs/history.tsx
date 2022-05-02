@@ -1,10 +1,12 @@
 import React, { useEffect } from 'react';
 import type { GetStaticProps, NextPage } from 'next';
 import shallow from 'zustand/shallow';
+import useSWR from 'swr';
 
 import { useUserProfileStore, useUserRequestsStore } from 'lib/store/user';
 import Container from 'components/common/Container';
 import RequestTable from 'components/request/RequestTable';
+import { client } from 'lib/api/axiosClient';
 
 type Props = {};
 
@@ -12,24 +14,35 @@ export const getStaticProps: GetStaticProps = () => {
   return {
     props: {
       protected: true,
-      // userTypes: ['user'],
     },
   };
 };
 
 const RequestHistoryPage: NextPage<Props> = () => {
   const profile = useUserProfileStore((state) => state.profile);
-  const { completedRequests, populateRequests } = useUserRequestsStore(
+  const { completedRequests, setRequests } = useUserRequestsStore(
     (state) => ({
       completedRequests: state.completedRequests,
-      populateRequests: state.populateRequests,
+      setRequests: state.setRequests,
     }),
     shallow
   );
 
+  const { data: requestsData, error: requestsError } = useSWR(
+    `api/user/${profile!._id}/requests`,
+    client.get
+  );
+
   useEffect(() => {
-    populateRequests(profile!._id);
-  }, [profile, populateRequests]);
+    if (requestsData) setRequests(requestsData);
+  }, [profile, requestsData, setRequests]);
+
+  if (requestsError)
+    return (
+      <Container>
+        Unknown Error Occurred. Please Refresh the page and try again.
+      </Container>
+    );
 
   return (
     <Container>

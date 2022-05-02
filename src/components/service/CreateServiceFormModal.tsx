@@ -1,8 +1,10 @@
 import React, { Fragment, useState } from 'react';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import { Dialog, Transition } from '@headlessui/react';
+import { useSWRConfig } from 'swr';
 
 import { client } from 'lib/api/axiosClient';
+import { useUserProfileStore } from 'lib/store/user';
 
 type Props = {
   isOpen: boolean;
@@ -11,6 +13,9 @@ type Props = {
 
 const CreateServiceFormModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
   const [showSubmitted, setShowSubmitted] = useState(false);
+  const profile = useUserProfileStore((state) => state.profile);
+  const { mutate } = useSWRConfig();
+
   return (
     <Transition.Root show={isOpen} as={Fragment}>
       <Dialog
@@ -49,12 +54,14 @@ const CreateServiceFormModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                   image: '',
                 }}
                 onSubmit={async (values, { setSubmitting, resetForm }) => {
-                  await client.post('/api/service', {
+                  await client.post('api/service', {
                     ...values,
                   });
 
                   setSubmitting(false);
                   resetForm();
+
+                  mutate(`api/user/${profile?._id}/services`);
 
                   setShowSubmitted(true);
                   setTimeout(() => {

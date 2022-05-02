@@ -1,12 +1,12 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { GetStaticProps, NextPage } from 'next';
-import shallow from 'zustand/shallow';
+import useSWR from 'swr';
 
-import { useSearchStore } from 'lib/store/global';
 import { client } from 'lib/api/axiosClient';
 import Container from 'components/common/Container';
 import { SearchIcon } from 'components/icons';
 import ServiceCard from 'components/service/ServiceCard';
+import { IService } from 'types';
 
 type Props = {};
 
@@ -14,18 +14,19 @@ export const getStaticProps: GetStaticProps = () => {
   return {
     props: {
       protected: true,
-      // userTypes: ['user'],
     },
   };
 };
 
 const ServicesPage: NextPage<Props> = () => {
-  const { services, setServices } = useSearchStore(
-    (state) => ({ services: state.services, setServices: state.setServices }),
-    shallow
-  );
-
+  const [prevDate, setPrevDate] = useState(new Date().toISOString());
+  const [services, setServices] = useState<IService[]>([]);
   const [searchString, setSearchString] = useState('');
+
+  const { data: servicesData, error: servicesError } = useSWR(
+    `api/service`,
+    (url) => client.get(`${url}/?limit=25&prev=${prevDate}`)
+  );
 
   const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
@@ -33,24 +34,50 @@ const ServicesPage: NextPage<Props> = () => {
   };
 
   const filteredServices = useMemo(() => {
-    if (!searchString || searchString === '') return services;
+    if (searchString === '') return services;
     else
       return services.filter((value) =>
         value.name
           .concat(value.description)
+          .concat(value.seller.name)
+          .concat(value.seller.username)
           .toLowerCase()
-          .includes(searchString)
+          .includes(searchString.toLowerCase())
       );
   }, [searchString, services]);
 
   useEffect(() => {
-    const _getServices = async () => {
-      const res = await client.get('api/service');
-      setServices(res);
-    };
+    if (servicesData) {
+      setServices(servicesData);
+    }
+  }, [servicesData, setServices]);
 
-    _getServices();
-  }, [setServices]);
+  const getNext = () => {
+    setPrevDate(
+      servicesData.reduce((prev: string, curr: IService) => {
+        if (new Date(curr.updatedAt) < new Date(prev)) return curr.updatedAt;
+        return prev;
+      }, new Date().toISOString())
+    );
+  };
+
+  const getPrev = () => {
+    setPrevDate(
+      servicesData.reduce((prev: string, curr: IService) => {
+        if (new Date(curr.updatedAt) > new Date(prev)) return curr.updatedAt;
+        return prev;
+      }, new Date().toISOString())
+    );
+  };
+
+  if (servicesError)
+    return (
+      <Container>
+        <div className="grid w-full place-items-center text-gray-600">
+          Something went wrong. Please refresh and try again!
+        </div>
+      </Container>
+    );
 
   return (
     <Container>
@@ -74,8 +101,6 @@ const ServicesPage: NextPage<Props> = () => {
             className="w-full px-4 py-2 focus:text-black rounded-3xl border focus:border-accent-100 focus:outline-none focus:ring-0"
             value={searchString}
             onChange={onChangeHandler}
-            // onBlur={() => setShowResults(false)}
-            // onFocus={() => setShowResults(true)
           />
         </div>
 
@@ -90,6 +115,27 @@ const ServicesPage: NextPage<Props> = () => {
               <div className="text-gray-500">Wow! Such Empty :(</div>
             )}
           </div>
+        </div>
+
+        <div className="col-span-full pt-12">
+          <button
+            className="py-4 px-2 text-accent-300"
+            onClick={(e) => {
+              e.preventDefault();
+              getPrev();
+            }}
+          >
+            Prev
+          </button>
+          <button
+            className="py-4 px-2 text-accent-300"
+            onClick={(e) => {
+              e.preventDefault();
+              getNext();
+            }}
+          >
+            Next
+          </button>
         </div>
       </div>
     </Container>

@@ -13,7 +13,9 @@ const GridLayout: React.FC<Props> = ({ children }) => {
           <Sidebar />
         </div>
       </div>
-      <div className="lg:pl-80 w-full bg-gray-100">{children}</div>
+      <div className="lg:pl-80 w-full bg-gray-100 overflow-auto">
+        {children}
+      </div>
     </>
   );
 };

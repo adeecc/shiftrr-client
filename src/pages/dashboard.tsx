@@ -3,20 +3,20 @@ import type { GetStaticProps, NextPage } from 'next';
 import NextLink from 'next/link';
 import shallow from 'zustand/shallow';
 
-import { IService } from 'types';
+import useSWR from 'swr';
 
 import {
   useUserProfileStore,
   useUserRequestsStore,
   useUserServicesStore,
 } from 'lib/store/user';
-import { client } from 'lib/api/axiosClient';
 
 import Container from 'components/common/Container';
 import { PlusIcon, RightArrowIcon } from 'components/icons';
 import CreateServiceFormModal from 'components/service/CreateServiceFormModal';
 import ServiceCard from 'components/service/ServiceCard';
 import RequestTable from 'components/request/RequestTable';
+import { client } from 'lib/api/axiosClient';
 
 type Props = {};
 
@@ -33,45 +33,51 @@ const ProfilePage: NextPage<Props> = () => {
   const profile = useUserProfileStore((state) => state.profile!);
 
   const [modalIsOpen, setModalIsOpen] = useState(false);
-
-  const [isPopulatingService, setIsPopulatingService] = useState(true);
-  const [isPopulatingRequests, setIsPopulatingRequests] = useState(true);
-
-  const { services, populateServices } = useUserServicesStore(
+  const { services, setServices } = useUserServicesStore(
     (state) => ({
       services: state.services,
-      populateServices: state.populateServices,
+      setServices: state.setServices,
     }),
     shallow
   );
 
-  const { acceptedRequests, requested, populateRequests } =
+  const { acceptedRequests, requested, setRequests, setRequested } =
     useUserRequestsStore(
       (state) => ({
         acceptedRequests: state.acceptedRequests,
         requested: state.requested,
-        populateRequests: state.populateRequests,
+        setRequests: state.setRequests,
+        setRequested: state.setRequested,
       }),
       shallow
     );
 
+  const { data: requestsData, error: requestsError } = useSWR(
+    `api/user/${profile._id}/requests`,
+    client.get
+  );
+
+  const { data: requestedData, error: requestedError } = useSWR(
+    `api/user/${profile._id}/requested`,
+    client.get
+  );
+
+  const { data: servicesData, error: servicesError } = useSWR(
+    `api/user/${profile._id}/services`,
+    client.get
+  );
+
   useEffect(() => {
-    const _populateServices = async () => {
-      await populateServices(profile!._id);
-      setIsPopulatingService(false);
-    };
-
-    _populateServices();
-  }, [modalIsOpen, profile, populateServices]); // modalIsOpen as parameter so the service can be populated whenever the modal closes. Ideally, extract our the service platform to a different component
+    if (servicesData) setServices(servicesData);
+  }, [modalIsOpen, setServices, servicesData]); // modalIsOpen as parameter so the service can be populated whenever the modal closes. Ideally, extract our the service platform to a different component
 
   useEffect(() => {
-    const _populateRequests = async () => {
-      populateRequests(profile._id);
-      setIsPopulatingRequests(false);
-    };
+    if (requestsData) setRequests(requestsData);
+  }, [modalIsOpen, setRequests, requestsData]); // modalIsOpen as parameter so the service can be populated whenever the modal closes. Ideally, extract our the service platform to a different component
 
-    _populateRequests();
-  }, [profile._id, populateRequests]);
+  useEffect(() => {
+    if (requestedData) setRequested(requestedData);
+  }, [modalIsOpen, setRequested, requestedData]); // modalIsOpen as parameter so the service can be populated whenever the modal closes. Ideally, extract our the service platform to a different component
 
   return (
     <>
@@ -117,7 +123,7 @@ const ProfilePage: NextPage<Props> = () => {
                 </div>
               ) : (
                 <span className="flex h-full items-center text-gray-500">
-                  {isPopulatingService ? 'Loading...' : 'Wow so empty :('}
+                  Wow so empty :(
                 </span>
               )}
             </div>
@@ -147,7 +153,7 @@ const ProfilePage: NextPage<Props> = () => {
                   <RequestTable requests={acceptedRequests} />
                 ) : (
                   <span className="flex h-full items-center text-gray-500">
-                    {isPopulatingRequests ? 'Loading...' : 'Wow so empty :('}
+                    Wow so empty :(
                   </span>
                 )}
               </div>
@@ -178,7 +184,7 @@ const ProfilePage: NextPage<Props> = () => {
                   <RequestTable isBuyer requests={requested} />
                 ) : (
                   <span className="flex h-full items-center text-gray-500">
-                    {isPopulatingRequests ? 'Loading...' : 'Wow so empty :('}
+                    Wow so empty :(
                   </span>
                 )}
               </div>

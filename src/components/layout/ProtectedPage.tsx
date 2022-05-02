@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import NextLink from 'next/link';
+import useSWR from 'swr';
 
 import { useUserProfileStore } from 'lib/store/user';
 import { client } from 'lib/api/axiosClient';
 import GridLayout from 'components/layout/GridLayout';
+import { IUser } from 'types';
 
 type Props = {
   pageProps: any;
@@ -10,20 +13,20 @@ type Props = {
 
 const ProtectedPage: React.FC<Props> = ({ pageProps, children }) => {
   const { profile, setProfile } = useUserProfileStore((state) => state);
+  const { data, error } = useSWR<IUser>('api/user/me', client.get);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const _getUser = async () => {
-      const res = await client.get('api/user/me');
       setIsLoading(false);
 
-      if (res) {
-        setProfile(res);
+      if (!error && data) {
+        setProfile(data);
       }
     };
 
     _getUser();
-  }, [setProfile]);
+  }, [data, error, setProfile]);
 
   if (!pageProps.protected) {
     return <>{children}</>;
@@ -40,7 +43,15 @@ const ProtectedPage: React.FC<Props> = ({ pageProps, children }) => {
   if (pageProps.protected && !isLoading && !profile) {
     return (
       <div className="h-screen grid place-items-center">
-        <h5 className="text-xl">Please Login to continue...</h5>
+        <h5 className="text-xl">
+          Please{' '}
+          <NextLink
+            href={`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/google`}
+          >
+            <a className="text-accent-300">Login</a>
+          </NextLink>{' '}
+          to continue...
+        </h5>
       </div>
     );
   }
