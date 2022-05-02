@@ -60,12 +60,10 @@ const ServiceDetailPage: NextPage<Props> = ({ id }) => {
 
   useEffect(() => {
     setService(serviceData);
-    console.log(serviceData);
   }, [id, serviceData, setService]);
 
   useEffect(() => {
     setRequestReviews(reviewData);
-    console.log(reviewData);
   }, [id, reviewData, setRequestReviews]);
 
   const deleteGigHandler = async (

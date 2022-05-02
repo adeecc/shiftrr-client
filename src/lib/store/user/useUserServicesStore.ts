@@ -1,6 +1,5 @@
 import create from 'zustand';
 import { IService } from 'types';
-import { client } from 'lib/api/axiosClient';
 
 type State = {
   services: IService[];

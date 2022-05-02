@@ -2,11 +2,12 @@ import React, { useMemo, useState } from 'react';
 import NextLink from 'next/link';
 import { Disclosure, Transition } from '@headlessui/react';
 import cn from 'classnames';
+import { useSWRConfig } from 'swr';
 
 import { client } from 'lib/api/axiosClient';
 import { IRequest, ReviewFor } from 'types';
 import { requestStatus } from 'types/request';
-import { useUserProfileStore, useUserRequestsStore } from 'lib/store/user';
+import { useUserProfileStore } from 'lib/store/user';
 import { DiscIcon } from 'components/icons';
 import CreateReviewFormModal from 'components/reviews/CreateReviewFormModal';
 
@@ -17,15 +18,12 @@ interface Props {
 
 const RequestRow: React.FC<Props> = ({ populatedRequest, isBuyer = false }) => {
   const profile = useUserProfileStore((state) => state.profile!);
+  const { mutate } = useSWRConfig();
 
   const [requestReviewModalIsOpen, setRequestReviewModalIsOpen] =
     useState(false);
   const [sellerReviewModalIsOpen, setSellerReviewModalIsOpen] = useState(false);
   const [buyerReviewModalIsOpen, setBuyerReviewModalIsOpen] = useState(false);
-
-  const populateRequests = useUserRequestsStore(
-    (state) => state.populateRequests
-  );
 
   const dateString = useMemo(
     () =>
@@ -49,31 +47,31 @@ const RequestRow: React.FC<Props> = ({ populatedRequest, isBuyer = false }) => {
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     e.preventDefault();
-    await client.put(`/api/requests/${populatedRequest._id}`, {
+    await client.put(`api/requests/${populatedRequest._id}`, {
       status: requestStatus.accepted,
     });
 
-    populateRequests(profile._id);
+    mutate(`api/user/${profile._id}/requests`);
   };
 
   const completeRequestHandler = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     e.preventDefault();
-    await client.put(`/api/requests/${populatedRequest._id}`, {
+    await client.put(`api/requests/${populatedRequest._id}`, {
       status: requestStatus.completed,
     });
 
-    populateRequests(profile._id);
+    mutate(`api/user/${profile._id}/requests`);
   };
 
   const removeRequestHandler = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     e.preventDefault();
-    await client.delete(`/api/requests/${populatedRequest._id}`);
-
-    populateRequests(profile._id);
+    await client.delete(`api/requests/${populatedRequest._id}`);
+    mutate(`api/user/${profile._id}/requests`);
+    mutate(`api/user/${profile._id}/requested`);
   };
 
   return (
@@ -179,7 +177,6 @@ const RequestRow: React.FC<Props> = ({ populatedRequest, isBuyer = false }) => {
                     onClick={(e) => {
                       e.preventDefault();
                       setSellerReviewModalIsOpen(true);
-                      console.log('Opening Review Modal');
                     }}
                   >
                     Review Seller
@@ -244,7 +241,6 @@ const RequestRow: React.FC<Props> = ({ populatedRequest, isBuyer = false }) => {
                     onClick={(e) => {
                       e.preventDefault();
                       setBuyerReviewModalIsOpen(true);
-                      console.log('Opening Review Modal');
                     }}
                   >
                     Review Buyer

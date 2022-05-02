@@ -19,12 +19,13 @@ export const getStaticProps: GetStaticProps = () => {
 };
 
 const ServicesPage: NextPage<Props> = () => {
+  const [prevDate, setPrevDate] = useState(new Date().toISOString());
   const [services, setServices] = useState<IService[]>([]);
   const [searchString, setSearchString] = useState('');
 
   const { data: servicesData, error: servicesError } = useSWR(
-    'api/service',
-    client.get
+    `api/service`,
+    (url) => client.get(`${url}/?limit=25&prev=${prevDate}`)
   );
 
   const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -46,8 +47,28 @@ const ServicesPage: NextPage<Props> = () => {
   }, [searchString, services]);
 
   useEffect(() => {
-    setServices(servicesData);
+    if (servicesData) {
+      setServices(servicesData);
+    }
   }, [servicesData, setServices]);
+
+  const getNext = () => {
+    setPrevDate(
+      servicesData.reduce((prev: string, curr: IService) => {
+        if (new Date(curr.updatedAt) < new Date(prev)) return curr.updatedAt;
+        return prev;
+      }, new Date().toISOString())
+    );
+  };
+
+  const getPrev = () => {
+    setPrevDate(
+      servicesData.reduce((prev: string, curr: IService) => {
+        if (new Date(curr.updatedAt) > new Date(prev)) return curr.updatedAt;
+        return prev;
+      }, new Date().toISOString())
+    );
+  };
 
   if (servicesError)
     return (
@@ -94,6 +115,27 @@ const ServicesPage: NextPage<Props> = () => {
               <div className="text-gray-500">Wow! Such Empty :(</div>
             )}
           </div>
+        </div>
+
+        <div className="col-span-full pt-12">
+          <button
+            className="py-4 px-2 text-accent-300"
+            onClick={(e) => {
+              e.preventDefault();
+              getPrev();
+            }}
+          >
+            Prev
+          </button>
+          <button
+            className="py-4 px-2 text-accent-300"
+            onClick={(e) => {
+              e.preventDefault();
+              getNext();
+            }}
+          >
+            Next
+          </button>
         </div>
       </div>
     </Container>

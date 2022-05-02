@@ -2,15 +2,27 @@ import React, { Fragment } from 'react';
 import NextLink from 'next/link';
 import NextImage from 'next/image';
 import { Menu, Transition } from '@headlessui/react';
+import { useSWRConfig } from 'swr';
 
 import { SelectorIcon } from 'components/icons';
 import NavItem from './NavItem';
 import { useUserProfileStore } from 'lib/store/user';
+import { useRouter } from 'next/router';
 
 type Props = {};
 
 const ProfileMenu: React.FC<Props> = () => {
   const profile = useUserProfileStore((state) => state.profile);
+  const router = useRouter();
+
+  const { mutate } = useSWRConfig();
+
+  const handleLogout = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.preventDefault();
+    mutate(`api/user/me`);
+    router.push(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/google/logout`);
+  };
+
   return (
     <Menu as="div" className="relative">
       <span className="sr-only">Open user menu</span>
@@ -69,12 +81,12 @@ const ProfileMenu: React.FC<Props> = () => {
             </Menu.Item>
             <Menu.Item>
               <Menu.Button className="text-left">
-                <NavItem
-                  href={`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/google/logout`}
-                  className="px-4 py-2 text-sm text-gray-700"
+                <button
+                  className="font-semibold text-sm text-gray-700 text-center px-4 hover:text-accent-300 transition-colors"
+                  onClick={handleLogout}
                 >
                   Logout
-                </NavItem>
+                </button>
               </Menu.Button>
             </Menu.Item>
           </Menu.Items>

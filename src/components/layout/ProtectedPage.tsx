@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import NextLink from 'next/link';
 import useSWR from 'swr';
 
 import { useUserProfileStore } from 'lib/store/user';
@@ -42,7 +43,15 @@ const ProtectedPage: React.FC<Props> = ({ pageProps, children }) => {
   if (pageProps.protected && !isLoading && !profile) {
     return (
       <div className="h-screen grid place-items-center">
-        <h5 className="text-xl">Please Login to continue...</h5>
+        <h5 className="text-xl">
+          Please{' '}
+          <NextLink
+            href={`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/google`}
+          >
+            <a className="text-accent-300">Login</a>
+          </NextLink>{' '}
+          to continue...
+        </h5>
       </div>
     );
   }

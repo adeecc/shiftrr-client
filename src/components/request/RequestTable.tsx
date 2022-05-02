@@ -33,7 +33,7 @@ const RequestTable: React.FC<Props> = ({
       </div>
 
       <div className={cn('overflow-auto', limitHeight ? 'max-h-64 ' : '')}>
-        {requests?.length ? (
+        {requests?.length > 0 ? (
           requests!.map((request) => {
             return (
               <RequestRow

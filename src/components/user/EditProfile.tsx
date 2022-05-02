@@ -31,7 +31,7 @@ const PersonalProfileForm: React.FC<PersonalProfileFormProps> = ({
         bio,
       }}
       onSubmit={async (values, { setSubmitting }) => {
-        await client.put('/api/user/me', values);
+        await client.put('api/user/me', values);
         setSubmitting(false);
       }}
     >
@@ -157,7 +157,7 @@ const SkillProfileForm: React.FC<SkillProfileFormProps> = ({
         skills: sellerProfile.skills,
       }}
       onSubmit={async (values, { setSubmitting }) => {
-        client.put('/api/user/me', {
+        await client.put('api/user/me', {
           sellerProfile: {
             domain: values.domain,
             skills: values.skills,

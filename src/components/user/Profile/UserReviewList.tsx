@@ -12,7 +12,6 @@ type Props = {
 };
 
 const UserReviewList: React.FC<Props> = ({ userId, reviewFor }) => {
-  const [isLoadingReviews, setIsLoadingReviews] = useState(true);
   const [reviews, setReviews] = useState<IReview[]>([]);
 
   const overallRating = useMemo(() => {
@@ -36,7 +35,7 @@ const UserReviewList: React.FC<Props> = ({ userId, reviewFor }) => {
   );
 
   useEffect(() => {
-    setReviews(reviewsData);
+    if (reviewsData) setReviews(reviewsData);
   }, [userId, reviewsData]);
 
   return (
@@ -52,9 +51,7 @@ const UserReviewList: React.FC<Props> = ({ userId, reviewFor }) => {
           </div>
         </div>
         <div className="flex flex-col">
-          {isLoadingReviews ? (
-            <span className="text-sm text-gray-500">Loading...</span>
-          ) : reviews.length ? (
+          {reviews.length ? (
             <div className="flex flex-col gap-y-5">
               {reviews.map((review) => (
                 <ReviewCard

@@ -30,8 +30,6 @@ export const useUserRequestsStore = create<State>((set) => ({
         return prev;
       }, {} as Record<requestStatus, IRequest[]>);
 
-      console.log(grouped, requests);
-
       return {
         ...state,
         acceptedRequests: grouped[requestStatus.accepted] || [],

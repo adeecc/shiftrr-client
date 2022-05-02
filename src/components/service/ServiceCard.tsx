@@ -4,7 +4,7 @@ import cn from 'classnames';
 
 import { IService } from 'types';
 import CreateRequestFormModal from 'components/request/CreateRequestFormModal';
-import { useUserProfileStore, useUserServicesStore } from 'lib/store/user';
+import { useUserProfileStore } from 'lib/store/user';
 import { client } from 'lib/api/axiosClient';
 
 import { useSWRConfig } from 'swr';
@@ -25,8 +25,9 @@ const ServiceCard: React.FC<Props> = ({ service, className }) => {
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     e.preventDefault();
-    await client.delete(`/api/service/${service._id}`);
+    await client.delete(`api/service/${service._id}`);
     mutate(`api/user/${profile!._id}/services`);
+    mutate(`api/service`);
   };
 
   return (

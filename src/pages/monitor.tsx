@@ -43,7 +43,7 @@ const CollectionsPage: NextPage<Props> = () => {
     initialValue: any = 0,
     reduction = (prev: any, _curr: any): any => prev + 1
   ) => {
-    const obj = data.reduce<Record<string, number>>((prev, item) => {
+    const obj = data?.reduce<Record<string, number>>((prev, item) => {
       const date = new Date(item.updatedAt);
       const group = `${date.getUTCFullYear()}-${date.getUTCMonth()}`;
 
@@ -52,13 +52,12 @@ const CollectionsPage: NextPage<Props> = () => {
       return prev;
     }, {} as Record<string, number>);
 
-    const dataByMonth = Object.entries(obj).sort((a, b) => {
+    const dataByMonth = Object.entries(obj || []).sort((a, b) => {
       if (a[0] < b[0]) return -1;
       if (a[0] === b[0]) return 0;
       else return 1;
     });
 
-    console.log(dataByMonth);
     const statThisMonth = (dataByMonth.at(-1)?.at(1) as number) || 0;
     const statLastMonth = (dataByMonth.at(-2)?.at(1) as number) || 0;
 

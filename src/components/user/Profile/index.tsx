@@ -39,7 +39,7 @@ const Profile: React.FC<Props> = ({
   const isBanned = useMemo(() => status === 'banned', [status]);
 
   const toggleBanUser = () => {
-    client.put(`/api/user/${_id}`, {
+    client.put(`api/user/${_id}`, {
       status: isBanned ? 'active' : 'banned',
     });
   };
